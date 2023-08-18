@@ -25,11 +25,10 @@ export default function RootLayout({
             <ConfigProvider theme={theme}>
                 <Header />
                 <div className='px-4 py-2'>
-                  <div className='bg-secondary min-h-[calc(100vh-80px)] w-full rounded-md border border-light '>
-
+                  <div className='bg-secondary h-[calc(100vh-80px)] w-full rounded-md border border-light '>
+                    {children}
                   </div>
                 </div>
-                {children}
             </ConfigProvider>
           </StyledComponentsRegistry>
         </body>

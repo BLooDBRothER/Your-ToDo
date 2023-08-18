@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.ant-divider{
+    @apply !w-9/12;
+}
+
+.ant-divider::after, .ant-divider::before{
+    @apply !border-light
+}
+
+.ant-divider-inner-text{
+    @apply text-light/50 text-sm
+}
