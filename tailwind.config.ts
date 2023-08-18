@@ -10,8 +10,12 @@ const config: Config = {
     extend: {
       colors: {
         primary: "#141414",
+        secondary: "#222225",
         light: "#DDD"
       },
+      borderColor: {
+        light: "#444"
+      }
     },
   },
   plugins: [],

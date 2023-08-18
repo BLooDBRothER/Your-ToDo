@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import { Nunito_Sans } from 'next/font/google'
 import theme from '@/theme/themeConfig'
 import StyledComponentsRegistry from '@/lib/AntdRegistry'
+import Header from '@/components/Header'
 
 const nunitoSans = Nunito_Sans({ subsets: ['latin'] })
 
@@ -22,9 +23,12 @@ export default function RootLayout({
         <body className={`bg-primary text-light ${nunitoSans.className}`}>
           <StyledComponentsRegistry>
             <ConfigProvider theme={theme}>
-                <header className='p-2'>
-                  <h1>Your ToDo</h1>
-                </header>
+                <Header />
+                <div className='px-4 py-2'>
+                  <div className='bg-secondary min-h-[calc(100vh-80px)] w-full rounded-md border border-light '>
+
+                  </div>
+                </div>
                 {children}
             </ConfigProvider>
           </StyledComponentsRegistry>
