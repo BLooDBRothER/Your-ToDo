@@ -1,10 +1,21 @@
+'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Divider } from 'antd';
 import Image from 'next/image';
 import { GoogleOutlined } from '@ant-design/icons';
 
-const Home = () => (
+const Home = () => {
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await fetch("/api/test")
+      const data= await res.json();
+      console.log(data)
+    }
+    fetchData()
+  }, [])
+  
+  return (
   <div className="h-full">
     <div className='flex items-center justify-center h-full'>
       <div className='flex flex-col items-center justify-center w-3/12 mx-auto bg-primary p-4 gap-4 h-[400px] rounded-md border border-light'>
@@ -23,6 +34,7 @@ const Home = () => (
       </div>
     </div>
   </div>
-);
+  )
+};
 
 export default Home;
