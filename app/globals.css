@@ -21,7 +21,3 @@
 .ant-dropdown-menu{
     @apply border border-light
 }
-
-.ant-dropdown-menu .ant-dropdown-menu-item{
-    @apply hover:!bg-transparent;
-}
