@@ -12,5 +12,16 @@
 }
 
 .ant-divider-inner-text{
-    @apply text-light/50 text-sm
+    @apply text-light/50 text-sm whitespace-normal;
+}
+
+
+/* dropdown menu */
+
+.ant-dropdown-menu{
+    @apply border border-light
+}
+
+.ant-dropdown-menu .ant-dropdown-menu-item{
+    @apply hover:!bg-transparent;
 }
