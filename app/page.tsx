@@ -5,7 +5,7 @@ import { Button, Divider } from 'antd';
 import Image from 'next/image';
 import { GoogleOutlined } from '@ant-design/icons';
 import { signIn, useSession } from 'next-auth/react';
-import TodoHeader from '@/components/todo/TodoHeader';
+import Todo from '@/components/todo/';
 
 const Home = () => {
 
@@ -17,9 +17,7 @@ const Home = () => {
     <div className="h-full">
       {
         isAuthorized ?
-        <div className='p-2'>
-          <TodoHeader />
-        </div> :
+        <Todo />:
         <div className='flex items-center justify-center h-full'>
           <div className='flex flex-col items-center justify-center w-9/12 md:w-[400px] mx-auto bg-primary p-4 gap-4 h-[400px] rounded-md border border-light'>
             <div className='flex-1 flex items-center justify-center'>

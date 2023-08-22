@@ -21,3 +21,9 @@
 .ant-dropdown-menu{
     @apply border border-light
 }
+
+
+.folder-ic svg{
+    @apply text-[2rem] sm:text-[1.2rem]
+    /* font-size: 2rem; */
+}

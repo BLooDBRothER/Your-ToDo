@@ -1,9 +1,6 @@
-import { ConfigProvider } from 'antd'
 import './globals.css'
 import type { Metadata } from 'next'
 import { Nunito_Sans } from 'next/font/google'
-import themeConfig from '@/theme/themeConfig'
-import StyledComponentsRegistry from '@/lib/AntdRegistry'
 import Header from '@/components/header/Header'
 import NextAuthProvider from '@/context/next-auth-session'
 import { getServerSession } from 'next-auth'
@@ -32,7 +29,7 @@ export default async function RootLayout({
           <AntdStyleProvider>
             <Header />
             <div className='px-4 py-2'>
-              <div className='bg-secondary h-[calc(100vh-80px)] w-full rounded-md border border-light '>
+              <div className='bg-secondary h-[calc(100vh-80px)] w-full rounded-md border border-light overflow-auto'>
                 {children}
               </div>
             </div>
