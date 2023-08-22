@@ -13,14 +13,14 @@ export const authOptions = {
     callbacks: {
         async signIn({ user }: any) {
 
-            const dbUser = await prisma.users.findUnique({
+            const dbUser = await prisma.user.findUnique({
                 where: {
                     email: user.email as string
                 }
             })
 
             if(!dbUser){
-                await prisma.users.create({
+                await prisma.user.create({
                     data: {
                         email: user.email,
                         profilePic: user.image,
@@ -36,7 +36,7 @@ export const authOptions = {
             return session
         },
         async jwt({ token }:any) {
-            const dbUser = await prisma.users.findUnique({
+            const dbUser = await prisma.user.findUnique({
                 where: {
                     email: token.email as string
                 }

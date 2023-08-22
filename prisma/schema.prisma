@@ -7,11 +7,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model users {
-  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email String @unique
-  name String
-  profilePic String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model User {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email      String   @unique
+  name       String
+  profilePic String?  @map("profile_pic")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  folders    Folder?
+
+  @@map("users")
+}
+
+model Folder {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String
+  parentFolderId String?   @unique @db.Uuid @map("parent_folder_id")
+  parentFolder   Folder?   @relation("parentFolder", fields: [parentFolderId], references: [id])
+  folder         Folder?   @relation("parentFolder")
+  user           User      @relation(fields: [createdBy], references: [id])
+  createdBy      String    @unique @db.Uuid @map("created_by")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  @@map("folders")
 }
