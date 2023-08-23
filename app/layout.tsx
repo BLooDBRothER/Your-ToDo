@@ -6,6 +6,7 @@ import NextAuthProvider from '@/context/next-auth-session'
 import { getServerSession } from 'next-auth'
 import { authOptions } from './api/auth/[...nextauth]/route'
 import { AntdStyleProvider } from '@/context/AntdProvider'
+import TodoContextProvider from '@/context/TodoContext'
 
 const nunitoSans = Nunito_Sans({ subsets: ['latin'] })
 
@@ -27,12 +28,14 @@ export default async function RootLayout({
       <body className={`bg-primary text-light ${nunitoSans.className}`}>
         <NextAuthProvider session={session}>
           <AntdStyleProvider>
-            <Header />
-            <div className='px-4 py-2'>
-              <div className='bg-secondary h-[calc(100vh-80px)] w-full rounded-md border border-light overflow-auto'>
-                {children}
+            <TodoContextProvider>
+              <Header />
+              <div className='px-4 py-2'>
+                <div className='bg-secondary h-[calc(100vh-80px)] w-full rounded-md border border-light overflow-auto'>
+                  {children}
+                </div>
               </div>
-            </div>
+            </TodoContextProvider>
           </AntdStyleProvider>
         </NextAuthProvider>
       </body>
