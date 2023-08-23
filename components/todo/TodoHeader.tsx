@@ -16,7 +16,7 @@ const TodoHeader = ({ openModal }: TodoHeaderPropsType) => {
     const newButtonItems: MenuProps["items"] = [
         {
             key: "folder",
-            label:  <div className='text-sm flex items-center justify-start gap-2 px-2 py-1' onClick={openModal.bind(null, "create", null)}>
+            label:  <div className='text-sm flex items-center justify-start gap-2 px-2 py-1' onClick={openModal.bind(null, "create", null, '')}>
                         <span><FolderAddOutlined /></span>
                         <span>Folder</span>
                     </div>

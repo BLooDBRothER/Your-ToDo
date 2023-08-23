@@ -11,7 +11,7 @@ export async function GET(){
 
     const userId = session.user.id as string;
 
-    const query = "SELECT f.name, f.id FROM public.folders f join public.users u on f.created_by = u.id where u.id = $1"
+    const query = "SELECT f.name, f.id FROM public.folders f join public.users u on f.created_by = u.id where u.id = $1 and parent_folder_id IS NULL"
     const data = await conn?.query(query, [userId]);
 
     console.log(data);

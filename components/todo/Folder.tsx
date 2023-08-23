@@ -4,6 +4,7 @@ import { MenuItemType } from 'antd/es/menu/hooks/useItems'
 import React, { useEffect, useRef, useState } from 'react'
 import { ModalOpenType } from '.'
 import { useRouter } from 'next/navigation'
+import { TodoContextType, useTodoContext } from '@/context/TodoContext'
 
 type FolderPropType = {
     id: string
@@ -29,17 +30,20 @@ const dropdownMenuItem: MenuItemType[] = [
 const Folder = ({ id, name, openModal }: FolderPropType) => {
     const { modal } = App.useApp();
     const router = useRouter();
+    
+    const { deleteFolder } = useTodoContext() as TodoContextType
 
     const [isDropDownOpen, setDropDownOpen] = useState(false);
 
     const dropCntRef = useRef<HTMLDivElement>(null);
 
     const showDeleteConfirm = () => {
-        console.log(modal)
         modal.confirm({
-            title: 'Are you sure delete this Folder?',
+            title: <div>
+                        <div>Are you sure delete the Folder ?</div>
+                        <div className='bg-primary p-1 rounded-md w-fit flex items-center gap-2 m-4'><FolderOutlined />{name}</div>
+                    </div>,
             icon: <DeleteOutlined />,
-            content: 'Some descriptions',
             okText: 'Delete',
             okType: 'danger',
             okButtonProps: {
@@ -47,10 +51,7 @@ const Folder = ({ id, name, openModal }: FolderPropType) => {
             },
             cancelText: 'No',
             onOk() {
-                console.log('OK');
-            },
-            onCancel() {
-                console.log('Cancel');
+                deleteFolder(id);
             },
         });
     };
@@ -72,7 +73,7 @@ const Folder = ({ id, name, openModal }: FolderPropType) => {
     }
 
     const handleDropdownMenuClick = ({ key }: { key: string }) => {
-        key === "rename" ? openModal("rename", id) : showDeleteConfirm();
+        key === "rename" ? openModal("rename", id, name) : showDeleteConfirm();
     }
 
     useEffect(() => {
@@ -86,7 +87,7 @@ const Folder = ({ id, name, openModal }: FolderPropType) => {
     }, [])
 
     return (
-        <Dropdown menu={{ items: dropdownMenuItem, onClick: handleDropdownMenuClick }} open={isDropDownOpen} trigger={["contextMenu", "click"]}>
+        <Dropdown menu={{ items: dropdownMenuItem, onClick: handleDropdownMenuClick }} open={isDropDownOpen} trigger={["click"]}>
             <div className='bg-primary p-4 flex flex-col items-center gap-4 w-[150px] rounded-lg text-lg hover:bg-primary/80 sm:w-[250px] sm:flex-row' onClick={navigate} ref={dropCntRef} role='button' onContextMenu={triggerDropdown} title={name}>
                 <FolderOutlined className='folder-ic' />
                 <div className='sm:flex-1 flex items-center'>

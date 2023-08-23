@@ -3,7 +3,7 @@ import TodoHeader from './TodoHeader'
 import TodoBody from './TodoBody'
 import NameModal from './NameModal'
 
-export type ModalOpenType = (type: "create" | "rename", id?: string | null) => void
+export type ModalOpenType = (type: "create" | "rename", id?: string | null, name?: string) => void
 
 export type NameModalType = {
     id: string | null
@@ -27,9 +27,9 @@ const Todo = ( {folderId }: {folderId: string | null}) => {
         setNameModal(NAME_MODEL_INITIAL_VALUE)
     }
 
-    const openModal = (type: "create" | "rename", id: string | null = null) => {
+    const openModal = (type: "create" | "rename", id: string | null = null, name: string = '') => {
         console.log('kille')
-        setNameModal({type, isOpen: true, id})
+        setNameModal({type, isOpen: true, id, name})
     }
 
     return (
@@ -38,7 +38,7 @@ const Todo = ( {folderId }: {folderId: string | null}) => {
             <TodoBody openModal={openModal} folderId={folderId}/>
 
             {/* name modal */}
-            <NameModal isOpen={nameModal.isOpen} type={nameModal.type} closeModal={closeModal} id={nameModal.id} name={nameModal.name} />
+            {nameModal.isOpen && <NameModal isOpen={nameModal.isOpen} type={nameModal.type} closeModal={closeModal} id={nameModal.id} name={nameModal.name} parentFolderId={folderId} />}
         </div>
     )
 }

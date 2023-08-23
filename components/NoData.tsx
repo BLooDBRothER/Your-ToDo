@@ -9,10 +9,12 @@ const NoData = () => {
             <Empty
                 image={
                     <Image
-                        src="/assets/no_data.svg"
-                        width={200}
-                        height={200}
+                        priority
+                        width={0}
+                        height={0}
+                        className='w-full h-auto'
                         alt='No Data'
+                        src="/assets/no_data.svg"
                     />
                 }
                 description={

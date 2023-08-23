@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma"
 import conn from "@/lib/db-pg";
 
-export async function GET(_: Request ,{ params }: { params: {id: string}}){
+export async function GET(_: Request, { params }: { params: {id: string}}){
     const folderId = params.id;
 
     const session = await getServerSession(authOptions);
@@ -21,8 +21,10 @@ export async function GET(_: Request ,{ params }: { params: {id: string}}){
     return NextResponse.json({"msg": "ok", folders: data.rows})
 }
 
-export async function UPDATE(request: Request){
-    const { name, folderId } = await request.json();
+export async function PATCH(request: Request, { params }: { params: {id: string}}){
+    const folderId = params.id;
+
+    const { name } = await request.json();
 
     const session = await getServerSession(authOptions);
 
@@ -30,16 +32,37 @@ export async function UPDATE(request: Request){
 
     const userId = session.user.id as string;
 
-    // const newFolder = await prisma.folder.create({
-    //     data: {
-    //         name,
-    //         parentFolderId: folderId,
-    //         createdBy: userId
-    //     }
-    // });
+    console.log(folderId, name, userId)
 
-    // console.log(newFolder);
+    await prisma.folder.update({
+        where: {
+            id: folderId,
+            createdBy: userId
+        },
+         data: {
+            name
+         }
+    })
 
-    return NextResponse.json({"message": "Created Successfully", "folderId": ""});
+    return NextResponse.json({"message": "Updated Successfully"});
+}
+
+export async function DELETE(_: Request, { params }: { params: {id: string}}){
+    const folderId = params.id;
+
+    const session = await getServerSession(authOptions);
+
+    if(!session) return NextResponse.json({"message": "Please Login"}, {status: 401});
+
+    const userId = session.user.id as string;
+
+    await prisma.folder.delete({
+        where: {
+            id: folderId,
+            createdBy: userId
+        }
+    });
+
+    return NextResponse.json({"message": "Deleted Successfully"});
 
 }
