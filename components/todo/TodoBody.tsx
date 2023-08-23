@@ -5,6 +5,7 @@ import Folder from './Folder'
 import { ModalOpenType } from '.'
 import { TodoContextType, useTodoContext } from '@/context/TodoContext'
 import TodoLoading from './TodoLoading'
+import NoData from '../NoData'
 
 type TodoBodyPropsType = {
     folderId: string | null
@@ -48,6 +49,7 @@ const TodoBody = ({ folderId, openModal }: TodoBodyPropsType) => {
                         ))}
                     </>
                 }
+                {folderData.folders.length === 0 && !isLoading.folder && <NoData />}
             </div>
 
             <Divider />
