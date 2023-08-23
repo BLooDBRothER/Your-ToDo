@@ -1,14 +1,18 @@
 import { FolderFilled, HomeOutlined, UnorderedListOutlined } from '@ant-design/icons'
 import { Breadcrumb, Divider } from 'antd'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Folder from './Folder'
 import { ModalOpenType } from '.'
+import { TodoContextType, useTodoContext } from '@/context/TodoContext'
+import TodoLoading from './TodoLoading'
 
 type TodoBodyPropsType = {
+    folderId: string | null
     openModal: ModalOpenType
 }
 
-const TodoBody = ({ openModal }: TodoBodyPropsType) => {
+const TodoBody = ({ folderId, openModal }: TodoBodyPropsType) => {
+    const { folderData, isLoading, getFolderData } = useTodoContext() as TodoContextType;
 
     const breadcrumbItem = [
         {
@@ -19,6 +23,10 @@ const TodoBody = ({ openModal }: TodoBodyPropsType) => {
           href: "/"
         },
       ]
+
+    useEffect(() => {
+        getFolderData(folderId);
+    }, [getFolderData, folderId])
 
     return (
         <div>
@@ -32,13 +40,14 @@ const TodoBody = ({ openModal }: TodoBodyPropsType) => {
             </div>
 
             <div className='p-2 flex items-center justify-evenly sm:justify-start gap-4 flex-wrap'>
-                <Folder id="test" name='Folder 1' openModal={openModal} />
-                <Folder id="test" name='Folder 2' openModal={openModal} />
-                <Folder id="test" name='Folder 3' openModal={openModal} />
-                <Folder id="test" name='Folder 4' openModal={openModal} />
-                <Folder id="test" name='Folder 5' openModal={openModal} />
-                <Folder id="test" name='Folder 6' openModal={openModal} />
-                <Folder id="test" name='Folder 7' openModal={openModal} />
+                {isLoading.folder ? 
+                    <TodoLoading />:
+                    <>
+                        {folderData.folders.map(folder => (
+                            <Folder key={folder.id} id={folder.id} name={folder.name} openModal={openModal} />
+                        ))}
+                    </>
+                }
             </div>
 
             <Divider />

@@ -5,19 +5,21 @@ import NameModal from './NameModal'
 
 export type ModalOpenType = (type: "create" | "rename", id?: string | null) => void
 
-type NameModalType = {
-    isOpen: boolean
+export type NameModalType = {
+    id: string | null
+    name?: string | null
     type: "create" | "rename"
-    id?: string | null
+    isOpen: boolean
 }
 
 const NAME_MODEL_INITIAL_VALUE: NameModalType = {
+    id: null,
     isOpen: false,
     type: "create",
 }
 
 
-const Todo = () => {
+const Todo = ( {folderId }: {folderId: string | null}) => {
 
     const [nameModal, setNameModal] = useState<NameModalType>(NAME_MODEL_INITIAL_VALUE);
 
@@ -33,10 +35,10 @@ const Todo = () => {
     return (
         <div className='p-2'>
             <TodoHeader openModal={openModal} />
-            <TodoBody openModal={openModal}/>
+            <TodoBody openModal={openModal} folderId={folderId}/>
 
             {/* name modal */}
-            <NameModal isOpen={nameModal.isOpen} type={nameModal.type} closeModal={closeModal} />
+            <NameModal isOpen={nameModal.isOpen} type={nameModal.type} closeModal={closeModal} id={nameModal.id} name={nameModal.name} />
         </div>
     )
 }
