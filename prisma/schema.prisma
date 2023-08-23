@@ -15,7 +15,7 @@ model User {
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
-  folders    Folder?
+  folders    Folder[]
 
   @@map("users")
 }
@@ -23,11 +23,11 @@ model User {
 model Folder {
   id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name           String
-  parentFolderId String?   @unique @db.Uuid @map("parent_folder_id")
-  parentFolder   Folder?   @relation("parentFolder", fields: [parentFolderId], references: [id])
-  folder         Folder?   @relation("parentFolder")
-  user           User      @relation(fields: [createdBy], references: [id])
-  createdBy      String    @unique @db.Uuid @map("created_by")
+  parentFolderId String?   @db.Uuid @map("parent_folder_id")
+  parentFolder   Folder?   @relation("parentFolder", fields: [parentFolderId], references: [id], onDelete: Cascade)
+  folder         Folder[]  @relation("parentFolder")
+  user           User?     @relation(fields: [createdBy], references: [id])
+  createdBy      String    @db.Uuid @map("created_by")
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
 
