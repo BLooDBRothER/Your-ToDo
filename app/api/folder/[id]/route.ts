@@ -13,12 +13,17 @@ export async function GET(_: Request, { params }: { params: {id: string}}){
 
     const userId = session.user.id as string;
 
-    const query = "SELECT f.name, f.id FROM public.folders f join public.users u on f.created_by = u.id where u.id = $1 and f.parent_folder_id = $2"
-    const data = await conn?.query(query, [userId, folderId]);
+    const query = "SELECT f.name, f.id FROM public.folders f join public.users u on f.created_by = u.id where u.id = $1 and f.parent_folder_id = $2";
 
-    console.log(data);
-
-    return NextResponse.json({"msg": "ok", folders: data.rows})
+    try {
+        const data = await conn?.query(query, [userId, folderId]);
+        
+        return NextResponse.json({"msg": "ok", folders: data.rows})
+    }
+    catch {
+        return NextResponse.json({"message": "Folder Not Found"}, {status: 404});
+    }
+    
 }
 
 export async function PATCH(request: Request, { params }: { params: {id: string}}){
@@ -32,19 +37,22 @@ export async function PATCH(request: Request, { params }: { params: {id: string}
 
     const userId = session.user.id as string;
 
-    console.log(folderId, name, userId)
+    try{
+        await prisma.folder.update({
+            where: {
+                id: folderId,
+                createdBy: userId
+            },
+             data: {
+                name
+             }
+        });
+        return NextResponse.json({"message": "Updated Successfully"});
+    }
+    catch {
+        return NextResponse.json({"message": "Folder Not Found"}, {status: 404});
+    }
 
-    await prisma.folder.update({
-        where: {
-            id: folderId,
-            createdBy: userId
-        },
-         data: {
-            name
-         }
-    })
-
-    return NextResponse.json({"message": "Updated Successfully"});
 }
 
 export async function DELETE(_: Request, { params }: { params: {id: string}}){
@@ -56,13 +64,18 @@ export async function DELETE(_: Request, { params }: { params: {id: string}}){
 
     const userId = session.user.id as string;
 
-    await prisma.folder.delete({
-        where: {
-            id: folderId,
-            createdBy: userId
-        }
-    });
+    try {
+        await prisma.folder.delete({
+            where: {
+                id: folderId,
+                createdBy: userId
+            }
+        });
+        return NextResponse.json({"message": "Deleted Successfully"});
+    }
+    catch {
+        return NextResponse.json({"message": "Folder Not Found"}, {status: 404});
+    }
 
-    return NextResponse.json({"message": "Deleted Successfully"});
 
 }

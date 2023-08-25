@@ -10,12 +10,24 @@ export async function GET(_: Request ,{ params }: { params: {id: string}}){
 
     if(!session) return NextResponse.json({"message": "Please Login"}, {status: 401});
 
-    const query = "WITH RECURSIVE ancestors as ( SELECT id, name, parent_folder_id FROM public.folders where id=$1 UNION ALL SELECT f.id, f.name, f.parent_folder_id FROM public.folders f join ancestors a on a.parent_folder_id = f.id ) SELECT * FROM ancestors;"
-    // const query = "WITH RECURSIVE ancestors as ( SELECT id, name, parent_folder_id FROM public.folders WHERE name='storeroom' UNION ALL SELECT f.id, f.name, f.parent_folder_id FROM public.folders f  join ances a on a.parent_folder_id = f.id ) select * from ances;"
-    // const data = await conn?.query(query);
-    const data = await conn?.query(query, [folderId]);
+    const userId = session.user.id;
 
-    console.log(data);
+    const query = `WITH RECURSIVE ancestors as ( 
+                                                 SELECT id, name, parent_folder_id, 1 as generation_level FROM public.folders where id=$1 AND created_by=$2
+                                                 UNION ALL 
+                                                 SELECT f.id, f.name, f.parent_folder_id, a.generation_level + 1 FROM public.folders f join ancestors a on a.parent_folder_id = f.id 
+                                                ) 
+                                                SELECT * FROM ancestors ORDER BY generation_level DESC;`
 
-    return NextResponse.json({"msg": "ok", folders: data.rows})
+    try {
+        const data = await conn?.query(query, [folderId, userId]);
+        console.log(data.rows)
+
+        return NextResponse.json({"msg": "ok", folders: data.rows})
+    }
+    catch {
+        return NextResponse.json({"message": "No folder Found"}, {status: 404});
+    }
+
+
 }
