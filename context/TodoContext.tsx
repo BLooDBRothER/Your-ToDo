@@ -7,6 +7,7 @@ export type TodoContextType = {
     folderData: FolderDataType
     isLoading: LoadingType
     parentFolders: FolderType[]
+    isInvalidPage: boolean
     getFolderData: (folderId: string | null) => void
     createFolder: (name: string, folderId: string | null) => Promise<boolean>
     updateFolder: (name: string, folderId: string) => Promise<boolean>
@@ -35,9 +36,8 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
     const [folderData, setFolderData] = useState<FolderDataType>({
         folders: []
     });
-
-    const [parentFolders, setParentFolder] = useState<FolderType[]>([])
-
+    const [parentFolders, setParentFolder] = useState<FolderType[]>([]);
+    const [isInvalidPage, setInvalidPage] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState({
         folder: true
     })
@@ -68,11 +68,22 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
     }
 
     const getAncestorsOfFolder = async (folderId: string) => {
-        const res = await axios.get(`/api/folder/${folderId}/get-parent`);
-        setParentFolder(res.data.folders)
+        try{
+            const res = await axios.get(`/api/folder/${folderId}/get-parent`);
+            
+            if(res.data.folders.length === 0){
+                setInvalidPage(true);
+                return;
+            }
+    
+            setParentFolder(res.data.folders)
+        }
+        catch{}
     }
 
     const getFolderData = useCallback(async (folderId: string | null = null) => {
+        // reset before request
+        setInvalidPage(false);
         setIsLoading(prev => ({...prev, folder: true}));
 
         const uri = folderId ? `/api/folder/${folderId}` : '/api/folder';
@@ -92,6 +103,8 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         catch (err: unknown){
             console.log(err)
             if(axios.isAxiosError(err)){
+                if(err.response?.status === 404)
+                    setInvalidPage(true)
                 return false;
             }
             return false;
@@ -146,7 +159,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
     }
 
     return (
-        <todoContext.Provider value={{folderData, isLoading, parentFolders, createFolder, getFolderData, updateFolder, deleteFolder}} >
+        <todoContext.Provider value={{folderData, parentFolders, isLoading, isInvalidPage, createFolder, getFolderData, updateFolder, deleteFolder}} >
             {children}
         </todoContext.Provider>
     )

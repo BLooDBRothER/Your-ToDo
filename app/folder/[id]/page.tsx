@@ -23,7 +23,7 @@ export default function Folder({ params }: FolderPropsType) {
     if(isAuthorized) return;
 
     router.push("/")
-  }, []);
+  }, [isAuthorized, router]);
 
   return (
     <div className="h-full">

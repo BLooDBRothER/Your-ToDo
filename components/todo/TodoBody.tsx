@@ -36,16 +36,14 @@ const TodoBody = ({ folderId, openModal }: TodoBodyPropsType) => {
             },
         ]
 
-        for(let i=parentFolders.length - 1; i >= 0; i--){
-            const folder = parentFolders[i];
+        parentFolders.forEach(folder => {
             const tempItem = {
                 title: <Link href={`/folder/${folder.id}`} className='!flex items-center gap-1'>
                             <span>{folder.name}</span>
                         </Link>
             }
             breadCrumb.push(tempItem)
-        }
-        console.log(breadCrumb, parentFolders)
+        })
         setBreadcrumbItem(breadCrumb)
 
     }, [parentFolders])

@@ -16,7 +16,7 @@ const TodoHeader = ({ openModal }: TodoHeaderPropsType) => {
     const newButtonItems: MenuProps["items"] = [
         {
             key: "folder",
-            label:  <div className='text-sm flex items-center justify-start gap-2 px-2 py-1' onClick={openModal.bind(null, "create", null, '')}>
+            label:  <div className='text-sm flex items-center justify-start gap-2 px-2 py-1'>
                         <span><FolderAddOutlined /></span>
                         <span>Folder</span>
                     </div>
@@ -30,13 +30,17 @@ const TodoHeader = ({ openModal }: TodoHeaderPropsType) => {
         }
     ]
 
+    const handleDropdownMenuClick = ({ key }: { key: string }) => {
+        key === "folder" ? openModal("create") : ''
+    }
+
     const onSearch = (text: string) => {
         console.log(text)
     }
 
     return (
         <div className='p-2 bg-primary rounded-md flex items-center justify-between gap-2'>
-            <Dropdown menu={{items: newButtonItems, inlineIndent: 50}}>
+            <Dropdown menu={{items: newButtonItems, inlineIndent: 50, onClick: handleDropdownMenuClick}}>
                 <Button type="primary" icon={<PlusOutlined />} >New</Button>
             </Dropdown>
             <Search placeholder="input search text" onSearch={onSearch} enterButton className='!w-[400px]' />

@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import TodoHeader from './TodoHeader'
 import TodoBody from './TodoBody'
 import NameModal from './NameModal'
+import { TodoContextType, useTodoContext } from '@/context/TodoContext'
+import PageNotFound from './404'
 
 export type ModalOpenType = (type: "create" | "rename", id?: string | null, name?: string) => void
 
@@ -21,6 +23,8 @@ const NAME_MODEL_INITIAL_VALUE: NameModalType = {
 
 const Todo = ( {folderId }: {folderId: string | null}) => {
 
+    const { isInvalidPage } = useTodoContext() as TodoContextType
+
     const [nameModal, setNameModal] = useState<NameModalType>(NAME_MODEL_INITIAL_VALUE);
 
     const closeModal = () => {
@@ -33,13 +37,19 @@ const Todo = ( {folderId }: {folderId: string | null}) => {
     }
 
     return (
-        <div className='p-2'>
-            <TodoHeader openModal={openModal} />
-            <TodoBody openModal={openModal} folderId={folderId}/>
+        <>
+            {
+                !isInvalidPage ?
+                <div className='p-2'>
+                    <TodoHeader openModal={openModal} />
+                    <TodoBody openModal={openModal} folderId={folderId}/>
 
-            {/* name modal */}
-            {nameModal.isOpen && <NameModal isOpen={nameModal.isOpen} type={nameModal.type} closeModal={closeModal} id={nameModal.id} name={nameModal.name} parentFolderId={folderId} />}
-        </div>
+                    {/* name modal */}
+                    {nameModal.isOpen && <NameModal isOpen={nameModal.isOpen} type={nameModal.type} closeModal={closeModal} id={nameModal.id} name={nameModal.name} parentFolderId={folderId} />}
+                </div> :
+                <PageNotFound />
+            }
+        </>
     )
 }
 

@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined, FolderOutlined, MoreOutlined } from '@ant-design/icons'
-import { App, Dropdown } from 'antd'
+import { App, Dropdown, Tooltip } from 'antd'
 import { MenuItemType } from 'antd/es/menu/hooks/useItems'
 import React, { useEffect, useRef, useState } from 'react'
 import { ModalOpenType } from '.'
@@ -28,21 +28,25 @@ const dropdownMenuItem: MenuItemType[] = [
 
 
 const Folder = ({ id, name, openModal }: FolderPropType) => {
-    const { modal } = App.useApp();
+    const { modal, message } = App.useApp();
     const router = useRouter();
-    
+
     const { deleteFolder } = useTodoContext() as TodoContextType
 
     const [isDropDownOpen, setDropDownOpen] = useState(false);
 
     const dropCntRef = useRef<HTMLDivElement>(null);
 
+    const showMessage = (isSuccess: boolean) => {
+        isSuccess ? message.success(`Folder Deleted Successfully`) : message.error("Error - Please Try Again");
+    }
+
     const showDeleteConfirm = () => {
         modal.confirm({
             title: <div>
-                        <div>Are you sure delete the Folder ?</div>
-                        <div className='bg-primary p-1 rounded-md w-fit flex items-center gap-2 m-4'><FolderOutlined />{name}</div>
-                    </div>,
+                <div>Are you sure delete the Folder ?</div>
+                <div className='bg-primary p-1 rounded-md w-fit flex items-center gap-2 m-4'><FolderOutlined />{name}</div>
+            </div>,
             icon: <DeleteOutlined />,
             okText: 'Delete',
             okType: 'danger',
@@ -50,8 +54,9 @@ const Folder = ({ id, name, openModal }: FolderPropType) => {
                 "type": "primary"
             },
             cancelText: 'No',
-            onOk() {
-                deleteFolder(id);
+            onOk: async () => {
+                const res = await deleteFolder(id);
+                showMessage(res);
             },
         });
     };
@@ -88,10 +93,12 @@ const Folder = ({ id, name, openModal }: FolderPropType) => {
 
     return (
         <Dropdown menu={{ items: dropdownMenuItem, onClick: handleDropdownMenuClick }} open={isDropDownOpen} trigger={["click"]}>
-            <div className='bg-primary p-4 flex flex-col items-center gap-4 w-[150px] rounded-lg text-lg hover:bg-primary/80 sm:w-[250px] sm:flex-row' onClick={navigate} ref={dropCntRef} role='button' onContextMenu={triggerDropdown} title={name}>
+            <div className='bg-primary p-4 flex flex-col items-center gap-4 w-[150px] rounded-lg text-lg hover:bg-primary/80 sm:w-[250px] sm:flex-row' onClick={navigate} ref={dropCntRef} role='button' onContextMenu={triggerDropdown}>
                 <FolderOutlined className='folder-ic' />
                 <div className='sm:flex-1 flex items-center'>
-                    <div className='flex-1 text-ellipsis overflow-hidden text-lg whitespace-nowrap'>{name}</div>
+                    <Tooltip title={name} placement='bottom' mouseEnterDelay={0.5}>
+                        <div className='flex-1 text-ellipsis overflow-hidden text-lg whitespace-nowrap'>{name}</div>
+                    </Tooltip>
                     <div className='hover:bg-light/10 rounded-md z-10' onClick={(e) => { e.stopPropagation(); setDropDownOpen(prev => !prev) }} role='button'>
                         <MoreOutlined />
                     </div>
