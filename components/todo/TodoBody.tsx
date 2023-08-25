@@ -8,6 +8,7 @@ import TodoLoading from './TodoLoading'
 import NoData from '../NoData'
 import Link from 'next/link'
 import { BreadcrumbItemType } from 'antd/es/breadcrumb/Breadcrumb'
+import TodoFile from './TodoFile'
 
 type TodoBodyPropsType = {
     folderId: string | null
@@ -63,9 +64,9 @@ const TodoBody = ({ folderId, openModal }: TodoBodyPropsType) => {
                 <h1>Folders</h1>
             </div>
 
-            <div className='p-2 flex items-center justify-evenly sm:justify-start gap-4 flex-wrap'>
+            <div className='p-2 folder-todo-cnt sm:flex sm:items-center sm:justify-start gap-4 flex-wrap'>
                 {isLoading.folder ? 
-                    <TodoLoading />:
+                    <TodoLoading type='folder' />:
                     <>
                         {folderData.folders.map(folder => (
                             <Folder key={folder.id} id={folder.id} name={folder.name} openModal={openModal} />
@@ -80,6 +81,12 @@ const TodoBody = ({ folderId, openModal }: TodoBodyPropsType) => {
             <div className='my-4 mx-2 text-2xl flex items-center justify-start gap-4'>
                 <UnorderedListOutlined className='text-light/50' />
                 <h1>Todo</h1>
+            </div>
+
+            {/* <div className='p-2 flex items-stretch justify-evenly sm:justify-start gap-4 flex-wrap'> */}
+            <div className='p-2 folder-todo-cnt'>
+                {/* <TodoLoading type='todo' /> */}
+                {/* <TodoFile /> */}
             </div>
         </div>
     )

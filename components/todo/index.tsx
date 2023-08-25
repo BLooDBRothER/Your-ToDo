@@ -40,7 +40,7 @@ const Todo = ( {folderId }: {folderId: string | null}) => {
         <>
             {
                 !isInvalidPage ?
-                <div className='p-2'>
+                <div className='p-2 relative'>
                     <TodoHeader openModal={openModal} />
                     <TodoBody openModal={openModal} folderId={folderId}/>
 

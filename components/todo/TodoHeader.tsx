@@ -39,7 +39,7 @@ const TodoHeader = ({ openModal }: TodoHeaderPropsType) => {
     }
 
     return (
-        <div className='p-2 bg-primary rounded-md flex items-center justify-between gap-2'>
+        <div className='p-2 bg-primary rounded-md flex items-center justify-between gap-2 sticky top-0 left-0 z-10'>
             <Dropdown menu={{items: newButtonItems, inlineIndent: 50, onClick: handleDropdownMenuClick}}>
                 <Button type="primary" icon={<PlusOutlined />} >New</Button>
             </Dropdown>

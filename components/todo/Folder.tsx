@@ -93,13 +93,13 @@ const Folder = ({ id, name, openModal }: FolderPropType) => {
 
     return (
         <Dropdown menu={{ items: dropdownMenuItem, onClick: handleDropdownMenuClick }} open={isDropDownOpen} trigger={["click"]}>
-            <div className='bg-primary p-4 flex flex-col items-center gap-4 w-[150px] rounded-lg text-lg hover:bg-primary/80 sm:w-[250px] sm:flex-row' onClick={navigate} ref={dropCntRef} role='button' onContextMenu={triggerDropdown}>
+            <div className='bg-primary p-4 flex flex-row items-center gap-4 w-full rounded-lg text-lg hover:bg-primary/80 sm:w-[250px]' onClick={navigate} ref={dropCntRef} role='button' onContextMenu={triggerDropdown}>
                 <FolderOutlined className='folder-ic' />
-                <div className='sm:flex-1 flex items-center'>
+                <div className='flex-1 flex items-center'>
                     <Tooltip title={name} placement='bottom' mouseEnterDelay={0.5}>
                         <div className='flex-1 text-ellipsis overflow-hidden text-lg whitespace-nowrap'>{name}</div>
                     </Tooltip>
-                    <div className='hover:bg-light/10 rounded-md z-10' onClick={(e) => { e.stopPropagation(); setDropDownOpen(prev => !prev) }} role='button'>
+                    <div className='hover:bg-light/10 rounded-md' onClick={(e) => { e.stopPropagation(); setDropDownOpen(prev => !prev) }} role='button'>
                         <MoreOutlined />
                     </div>
                 </div>

@@ -23,7 +23,12 @@
 }
 
 
-.folder-ic svg{
+.folder-ic svg, .file-todo-ic svg{
     @apply text-[2rem] sm:text-[1.2rem]
-    /* font-size: 2rem; */
+}
+
+.folder-todo-cnt{
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
+    @apply gap-4;
 }
