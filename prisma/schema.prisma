@@ -31,5 +31,29 @@ model Folder {
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
 
+  todo           Todo[]
+
   @@map("folders")
+}
+
+model Todo {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title          String
+  folderId       String?    @map("folder_id") @db.Uuid
+  folder         Folder?    @relation(fields: [folderId], references: [id], onDelete: Cascade) 
+
+  todoContent    TodoContent[]
+
+  @@map("todo")
+}
+
+
+model TodoContent {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  value          String
+  isCompleted    Boolean   @map("is_completed") @default(false)
+  todoId         String    @map("todo_id") @db.Uuid
+  todo           Todo      @relation(fields: [todoId], references: [id])
+
+  @@map("todo_content")
 }
