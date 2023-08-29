@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { ModalOpenType } from '.'
 import { useRouter } from 'next/navigation'
 import { TodoContextType, useTodoContext } from '@/context/TodoContext'
+import { dropdownMenuItem } from '@/lib/contextMenuItem'
 
 type FolderPropType = {
     id: string
@@ -12,19 +13,6 @@ type FolderPropType = {
     openModal: ModalOpenType
 }
 
-const dropdownMenuItem: MenuItemType[] = [
-    {
-        key: "rename",
-        label: "Rename",
-        icon: <EditOutlined />
-    },
-    {
-        key: "delete",
-        label: "Delete",
-        danger: true,
-        icon: <DeleteOutlined />
-    }
-]
 
 
 const Folder = ({ id, name, openModal }: FolderPropType) => {

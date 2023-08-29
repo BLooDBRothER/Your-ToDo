@@ -23,8 +23,13 @@
 }
 
 
-.folder-ic svg, .file-todo-ic svg{
+.folder-ic svg{
     @apply text-[2rem] sm:text-[1.2rem]
+}
+
+.file-todo-more-ic svg
+{
+    @apply text-[18px]
 }
 
 .folder-todo-cnt{

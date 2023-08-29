@@ -86,7 +86,7 @@ const TodoBody = ({ folderId, openModal }: TodoBodyPropsType) => {
             {/* <div className='p-2 flex items-stretch justify-evenly sm:justify-start gap-4 flex-wrap'> */}
             <div className='p-2 folder-todo-cnt'>
                 {/* <TodoLoading type='todo' /> */}
-                {/* <TodoFile /> */}
+                <TodoFile />
             </div>
         </div>
     )

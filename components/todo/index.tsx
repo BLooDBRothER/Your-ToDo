@@ -4,6 +4,7 @@ import TodoBody from './TodoBody'
 import NameModal from './NameModal'
 import { TodoContextType, useTodoContext } from '@/context/TodoContext'
 import PageNotFound from './404'
+import TodoModal from './TodoModal'
 
 export type ModalOpenType = (type: "create" | "rename", id?: string | null, name?: string) => void
 
@@ -46,6 +47,7 @@ const Todo = ( {folderId }: {folderId: string | null}) => {
 
                     {/* name modal */}
                     {nameModal.isOpen && <NameModal isOpen={nameModal.isOpen} type={nameModal.type} closeModal={closeModal} id={nameModal.id} name={nameModal.name} parentFolderId={folderId} />}
+                    <TodoModal />
                 </div> :
                 <PageNotFound />
             }
