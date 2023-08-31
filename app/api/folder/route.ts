@@ -11,10 +11,12 @@ export async function GET(){
 
     const userId = session.user.id as string;
 
-    const query = "SELECT f.name, f.id FROM public.folders f join public.users u on f.created_by = u.id where u.id = $1 and parent_folder_id IS NULL ORDER BY f .created_at"
+    const query = "SELECT f.name, f.id FROM public.folders f join public.users u on f.created_by = u.id where u.id = $1 and parent_folder_id IS NULL ORDER BY f.created_at"
+    const todoQuery = "SELECT t.title, t.id FROM public.todo t join public.users u on t.created_by = u.id where u.id = $1 and folder_id IS NULL ORDER BY t.created_at"
     const data = await conn?.query(query, [userId]);
+    const todoData = await conn?.query(todoQuery, [userId])
 
-    return NextResponse.json({"msg": "ok", folders: data.rows})
+    return NextResponse.json({"msg": "ok", folders: data.rows, todo: todoData.rows})
 }
 
 export async function POST(request: Request){
