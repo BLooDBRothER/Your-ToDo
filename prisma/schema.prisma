@@ -16,6 +16,7 @@ model User {
   updatedAt  DateTime @updatedAt @map("updated_at")
 
   folders    Folder[]
+  todo       Todo[]
 
   @@map("users")
 }
@@ -41,6 +42,10 @@ model Todo {
   title          String
   folderId       String?    @map("folder_id") @db.Uuid
   folder         Folder?    @relation(fields: [folderId], references: [id], onDelete: Cascade) 
+  user           User?     @relation(fields: [createdBy], references: [id])
+  createdBy      String    @db.Uuid @map("created_by")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
 
   todoContent    TodoContent[]
 
@@ -54,6 +59,8 @@ model TodoContent {
   isCompleted    Boolean   @map("is_completed") @default(false)
   todoId         String    @map("todo_id") @db.Uuid
   todo           Todo      @relation(fields: [todoId], references: [id])
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
 
   @@map("todo_content")
 }
