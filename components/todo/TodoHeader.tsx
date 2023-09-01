@@ -1,17 +1,18 @@
 import { FolderAddOutlined, PlusOutlined, UnorderedListOutlined } from '@ant-design/icons'
 import { Button, Dropdown, Input, MenuProps, Segmented } from 'antd'
 import React from 'react'
-import { ModalOpenType } from '.'
+import { ModalOpenType, TodoModalOpenType} from '.'
 
 type TodoHeaderPropsType = {
     openModal: ModalOpenType
+    openTodoModal: TodoModalOpenType
 }
 
 const { Search } = Input;
 
 const filterOptions = ["All", "Folder", "Todo"];
 
-const TodoHeader = ({ openModal }: TodoHeaderPropsType) => {
+const TodoHeader = ({ openModal, openTodoModal }: TodoHeaderPropsType) => {
 
     const newButtonItems: MenuProps["items"] = [
         {
@@ -31,7 +32,7 @@ const TodoHeader = ({ openModal }: TodoHeaderPropsType) => {
     ]
 
     const handleDropdownMenuClick = ({ key }: { key: string }) => {
-        key === "folder" ? openModal("create") : ''
+        key === "folder" ? openModal("create") : openTodoModal(null, true, true, false);
     }
 
     const onSearch = (text: string) => {

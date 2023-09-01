@@ -2,7 +2,7 @@ import { FolderFilled, HomeOutlined, UnorderedListOutlined } from '@ant-design/i
 import { Breadcrumb, Divider } from 'antd'
 import React, { useEffect, useState } from 'react'
 import Folder from './Folder'
-import { ModalOpenType } from '.'
+import { ModalOpenType, TodoModalOpenType } from '.'
 import { TodoContextType, useTodoContext } from '@/context/TodoContext'
 import TodoLoading from './TodoLoading'
 import NoData from '../NoData'
@@ -13,10 +13,11 @@ import TodoFile from './TodoFile'
 type TodoBodyPropsType = {
     folderId: string | null
     openModal: ModalOpenType
+    openTodoModal: TodoModalOpenType
 }
 
-const TodoBody = ({ folderId, openModal }: TodoBodyPropsType) => {
-    const { folderData, isLoading, parentFolders, getFolderData } = useTodoContext() as TodoContextType;
+const TodoBody = ({ folderId, openModal, openTodoModal }: TodoBodyPropsType) => {
+    const { data, isLoading, parentFolders, getFolderData } = useTodoContext() as TodoContextType;
 
     const [breadcrumbItem, setBreadcrumbItem] = useState<BreadcrumbItemType[]>([
         {
@@ -68,12 +69,12 @@ const TodoBody = ({ folderId, openModal }: TodoBodyPropsType) => {
                 {isLoading.folder ? 
                     <TodoLoading type='folder' />:
                     <>
-                        {folderData.folders.map(folder => (
+                        {data.folders.map(folder => (
                             <Folder key={folder.id} id={folder.id} name={folder.name} openModal={openModal} />
                         ))}
                     </>
                 }
-                {folderData.folders.length === 0 && !isLoading.folder && <NoData />}
+                {data.folders.length === 0 && !isLoading.folder && <NoData description='No Folders' />}
             </div>
 
             <Divider />
@@ -84,9 +85,19 @@ const TodoBody = ({ folderId, openModal }: TodoBodyPropsType) => {
             </div>
 
             {/* <div className='p-2 flex items-stretch justify-evenly sm:justify-start gap-4 flex-wrap'> */}
-            <div className='p-2 folder-todo-cnt'>
-                {/* <TodoLoading type='todo' /> */}
-                <TodoFile />
+            <div>
+                <div className='p-2 folder-todo-cnt'>
+                    {isLoading.folder ?
+                        <TodoLoading type='todo' /> :
+                        <>
+                            {data.todo.map(todo => (
+                                <TodoFile key={todo.id} todo={todo} openTodoModal={openTodoModal} />
+                            ))}
+                        </>
+                    }
+                </div>
+                
+                {data.todo.length === 0 && !isLoading.folder && <NoData description='No Todo' />}
             </div>
         </div>
     )
