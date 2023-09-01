@@ -11,8 +11,9 @@ export async function GET(){
 
     const userId = session.user.id as string;
 
-    const query = "SELECT f.name, f.id FROM public.folders f join public.users u on f.created_by = u.id where u.id = $1 and parent_folder_id IS NULL ORDER BY f.created_at"
-    const todoQuery = "SELECT t.title, t.id FROM public.todo t join public.users u on t.created_by = u.id where u.id = $1 and folder_id IS NULL ORDER BY t.created_at"
+    const query = "SELECT name,id FROM public.folders WHERE created_by = $1 AND parent_folder_id IS NULL ORDER BY created_at"
+    const todoQuery = "SELECT title, id FROM public.todo WHERE created_by = $1 and folder_id IS NULL ORDER BY created_at"
+    
     const data = await conn?.query(query, [userId]);
     const todoData = await conn?.query(todoQuery, [userId])
 
