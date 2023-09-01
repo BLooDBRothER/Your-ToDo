@@ -59,7 +59,7 @@ model TodoContent {
   value          String
   isCompleted    Boolean   @map("is_completed") @default(false)
   todoId         String    @map("todo_id") @db.Uuid
-  todo           Todo      @relation(fields: [todoId], references: [id])
+  todo           Todo      @relation(fields: [todoId], references: [id], onDelete: Cascade)
   user           User?     @relation(fields: [createdBy], references: [id])
   createdBy      String    @db.Uuid @map("created_by")
   createdAt      DateTime  @default(now()) @map("created_at")

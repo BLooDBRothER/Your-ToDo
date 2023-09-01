@@ -165,7 +165,7 @@ const TodoModal = ({ todoItem, isOpen, isRename, closeModal  }: TodoModalPropsTy
             }
           </div>
         </div>
-        <div className=' rounded-lg flex items-center justify-center'>
+        <div className=' rounded-lg flex items-center justify-center mt-2'>
           <Space.Compact style={{ width: '70%' }} className=' bg-primary p-4 rounded-lg'>
             <Input placeholder='Enter Your TODO' value={todoValue} onPressEnter={addNewTodo} onChange={(e) => {setTodoValue(e.target.value)}} />
             <Button type="primary" icon={<PlusOutlined />} onClick={addNewTodo} >Add</Button>
