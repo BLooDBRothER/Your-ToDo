@@ -40,12 +40,12 @@ const TodoItem = ({ id, value, isChecked, updateTodo, deleteTodo }: TodoItemType
     return (<></>)
 
   return (
-    <div className={`bg-primary p-4 my-2 rounded-lg text-xl flex items-center justify-start hover:bg-primary/80 cursor-pointer border ${isChecked ? 'border-accent/60' : 'border-transparent'}`} onClick={updateCompleteStatus}>
+    <div className={`bg-primary p-4 my-2 rounded-lg text-xl flex items-center justify-start hover:bg-primary/80 cursor-pointer border ${isCompleted ? 'border-accent/60' : 'border-transparent'}`} onClick={updateCompleteStatus}>
       {
         !isEdit ?
           <div className='flex-1'>
-            {isChecked ? <CheckSquareOutlined /> : <BorderOutlined />}
-            <span className={`ml-2 ${isChecked ? 'text-white/50' : 'text-white'}`}>{inpValue}</span>
+            {isCompleted ? <CheckSquareOutlined /> : <BorderOutlined />}
+            <span className={`ml-2 ${isCompleted ? 'text-white/50' : 'text-white'}`}>{inpValue}</span>
           </div> :
           <Input value={inpValue} onChange={(e) => setInpValue(e.target.value)} onClick={(e) => {e.stopPropagation();}} onPressEnter={updateTodoValue} />
       }
