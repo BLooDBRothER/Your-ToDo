@@ -3,7 +3,7 @@ import React from 'react'
 
 import Image from 'next/image'
 
-const NoData = () => {
+const NoData = ({ description }: { description: string}) => {
     return (
         <div className='flex items-center justify-center w-full'>
             <Empty
@@ -19,7 +19,7 @@ const NoData = () => {
                 }
                 description={
                     <span className='bg-primary px-2 py-1 rounded-md'>
-                        No Folders
+                        {description}
                     </span>
                 }
             />

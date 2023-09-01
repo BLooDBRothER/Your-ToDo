@@ -5,7 +5,7 @@ import { NameModalType } from '.'
 
 type NameModalPropsType = NameModalType & {
   parentFolderId: string | null
-  closeModal: () => void
+  closeModal: (type: "folder" | "todo") => void
 }
 
 const NameModal = ({ type, isOpen, name, id, parentFolderId, closeModal }: NameModalPropsType) => {
@@ -24,7 +24,7 @@ const NameModal = ({ type, isOpen, name, id, parentFolderId, closeModal }: NameM
   const afterRequest = (responseStatus: boolean) => {
     showMessage(responseStatus);
     setFolderName('');
-    closeModal();
+    closeModal("folder");
   }
 
   const createNewFolder = async () => {
@@ -55,7 +55,7 @@ const NameModal = ({ type, isOpen, name, id, parentFolderId, closeModal }: NameM
   }, [isOpen])
 
   return (
-    <Modal title={`${type === "create" ? "New" : "Update"} Folder`} open={isOpen} okText={`${type === "create" ? "Create" : "Rename"}`} onOk={type === "create" ? createNewFolder : updateCurrentFolder} onCancel={closeModal}>
+    <Modal title={`${type === "create" ? "New" : "Update"} Folder`} open={isOpen} okText={`${type === "create" ? "Create" : "Rename"}`} onOk={type === "create" ? createNewFolder : updateCurrentFolder} onCancel={closeModal.bind(null, "folder")}>
       <Input placeholder='Enter Folder Name' value={folderName} status={`${error ? 'error' : ''}`} onChange={(e) => {
         setError('');
         setFolderName(e.target.value)

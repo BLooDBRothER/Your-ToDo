@@ -55,7 +55,6 @@ const Folder = ({ id, name, openModal }: FolderPropType) => {
 
     const triggerDropdown = (e: any) => {
         e.preventDefault();
-        console.log('hi');
         setDropDownOpen(true);
     }
 
@@ -80,14 +79,26 @@ const Folder = ({ id, name, openModal }: FolderPropType) => {
     }, [])
 
     return (
-        <Dropdown menu={{ items: dropdownMenuItem, onClick: handleDropdownMenuClick }} open={isDropDownOpen} trigger={["click"]}>
+        <Dropdown menu={{ items: dropdownMenuItem, onClick: handleDropdownMenuClick }} open={isDropDownOpen} trigger={["contextMenu"]}>
             <div className='bg-primary p-4 flex flex-row items-center gap-4 w-full rounded-lg text-lg hover:bg-primary/80 sm:w-[250px]' onClick={navigate} ref={dropCntRef} role='button' onContextMenu={triggerDropdown}>
                 <FolderOutlined className='folder-ic' />
                 <div className='flex-1 flex items-center'>
-                    <Tooltip title={name} placement='bottom' mouseEnterDelay={0.5}>
+                    <Tooltip title={name} placement='top' mouseEnterDelay={0.5}>
                         <div className='flex-1 text-ellipsis overflow-hidden text-lg whitespace-nowrap'>{name}</div>
                     </Tooltip>
-                    <div className='hover:bg-light/10 rounded-md' onClick={(e) => { e.stopPropagation(); setDropDownOpen(prev => !prev) }} role='button'>
+                    <div className='hover:bg-light/10 rounded-md' onClick={(e) => { 
+                        e.stopPropagation();
+                        const mouseEvent = new MouseEvent("contextmenu", {
+                            bubbles: true,
+                            cancelable: false,
+                            view: window,
+                            button: 2,
+                            buttons: 0,
+                            clientX: e.currentTarget.getBoundingClientRect().x,
+                            clientY: e.currentTarget.getBoundingClientRect().y +28
+                        });
+                        e.currentTarget.dispatchEvent(mouseEvent)
+                    }} role='button'>
                         <MoreOutlined />
                     </div>
                 </div>
