@@ -11,7 +11,8 @@ const config: Config = {
       colors: {
         primary: "#141414",
         secondary: "#222225",
-        light: "#DDD"
+        light: "#DDD",
+        accent: "#901ed6"
       },
       borderColor: {
         light: "#444"
