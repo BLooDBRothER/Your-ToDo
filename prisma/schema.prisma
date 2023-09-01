@@ -8,15 +8,16 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email      String   @unique
-  name       String
-  profilePic String?  @map("profile_pic")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email          String   @unique
+  name           String
+  profilePic     String?  @map("profile_pic")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
-  folders    Folder[]
-  todo       Todo[]
+  folders        Folder[]
+  todo           Todo[]
+  todoContent    TodoContent[]
 
   @@map("users")
 }
@@ -59,6 +60,8 @@ model TodoContent {
   isCompleted    Boolean   @map("is_completed") @default(false)
   todoId         String    @map("todo_id") @db.Uuid
   todo           Todo      @relation(fields: [todoId], references: [id])
+  user           User?     @relation(fields: [createdBy], references: [id])
+  createdBy      String    @db.Uuid @map("created_by")
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
 
