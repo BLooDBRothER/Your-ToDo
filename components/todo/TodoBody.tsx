@@ -3,12 +3,15 @@ import { Breadcrumb, Divider } from 'antd'
 import React, { useEffect, useState } from 'react'
 import Folder from './Folder'
 import { ModalOpenType, TodoModalOpenType } from '.'
-import { TodoContextType, useTodoContext } from '@/context/TodoContext'
+import { FolderType, TodoContextType, useTodoContext } from '@/context/TodoContext'
 import TodoLoading from './TodoLoading'
 import NoData from '../NoData'
 import Link from 'next/link'
 import { BreadcrumbItemType } from 'antd/es/breadcrumb/Breadcrumb'
 import TodoFile from './TodoFile'
+import MoveModal from './MoveModal'
+
+export type OpenMoveModalType = (id: string, name: string) => void
 
 type TodoBodyPropsType = {
     folderId: string | null
@@ -16,9 +19,21 @@ type TodoBodyPropsType = {
     openTodoModal: TodoModalOpenType
 }
 
+type MoveModalDataType = {
+    source: FolderType
+    isOpen: boolean
+}
+
 const TodoBody = ({ folderId, openModal, openTodoModal }: TodoBodyPropsType) => {
     const { data, isLoading, parentFolders, getFolderData } = useTodoContext() as TodoContextType;
 
+    const [moveModalData, setMoveModalData] = useState({
+        source: {
+            id: '',
+            name: ''
+        },
+        isOpen: false
+    })
     const [breadcrumbItem, setBreadcrumbItem] = useState<BreadcrumbItemType[]>([
         {
           title: <Link href="/" className='!flex items-center gap-1'>
@@ -27,6 +42,20 @@ const TodoBody = ({ folderId, openModal, openTodoModal }: TodoBodyPropsType) => 
                  </Link>
         },
     ])
+
+    const closeMoveModal = () => {
+        setMoveModalData(prev => ({...prev, isOpen: false}));
+    }
+
+    const openMoveModal: OpenMoveModalType = (id, name) => {
+        setMoveModalData({
+            source: {
+                id,
+                name
+            },
+            isOpen: true
+        })
+    }
 
     useEffect(() => {
         const breadCrumb: BreadcrumbItemType[] = [
@@ -70,7 +99,7 @@ const TodoBody = ({ folderId, openModal, openTodoModal }: TodoBodyPropsType) => 
                     <TodoLoading type='folder' />:
                     <>
                         {data.folders.map(folder => (
-                            <Folder key={folder.id} id={folder.id} name={folder.name} openModal={openModal} />
+                            <Folder key={folder.id} id={folder.id} name={folder.name} openModal={openModal} openMoveModal={openMoveModal} />
                         ))}
                     </>
                 }
@@ -99,6 +128,7 @@ const TodoBody = ({ folderId, openModal, openTodoModal }: TodoBodyPropsType) => 
                 
                 {data.todo.length === 0 && !isLoading.folder && <NoData description='No Todo' />}
             </div>
+            {moveModalData.isOpen && <MoveModal source={moveModalData.source} isOpen={moveModalData.isOpen} closeModal={closeMoveModal} />}
         </div>
     )
 }

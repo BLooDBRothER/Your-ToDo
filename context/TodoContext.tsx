@@ -9,6 +9,7 @@ export type TodoContextType = {
     parentFolders: FolderType[]
     isInvalidPage: boolean
     getFolderData: (folderId: string | null) => void
+    getOnlyFolder: (folderId: string | null) => Promise<FolderType[]>
     createFolder: (name: string, folderId: string | null) => Promise<boolean>
     updateFolder: (name: string, folderId: string) => Promise<boolean>
     deleteFolder: (folderId: string) => Promise<boolean>
@@ -29,7 +30,7 @@ type LoadingType = {
     todoContent: boolean
 }
 
-type FolderType = {
+export type FolderType = {
     id:string
     name: string
 }
@@ -126,7 +127,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         try{
             const res = await axios.get(uri);
             console.log(res.data)
-            setData(prev => ({folders: res.data.folders, todo: res.data.todo}));
+            setData({folders: res.data.folders, todo: res.data.todo});
     
             return true
         }
@@ -143,6 +144,28 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
             setIsLoading(prev => ({...prev, folder: false}));
         }
     }, [])
+
+    const getOnlyFolder = async (folderId: string | null = null) => {;
+
+        const uri = folderId ? `/api/folder/${folderId}/?onlyFolder=true` : '/api/folder/?onlyFolder=true';
+
+        try{
+            const res = await axios.get(uri);    
+            return res.data.folders
+        }
+        catch (err: unknown){
+            console.log(err)
+            if(axios.isAxiosError(err)){
+                if(err.response?.status === 404)
+                    setInvalidPage(true)
+                return [];
+            }
+            return [];
+        }
+        finally{
+            setIsLoading(prev => ({...prev, folder: false}));
+        }
+    }
 
     const updateFolder = async (folderId: string, name: string) => {
         try {
@@ -371,7 +394,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
     }
 
     return (
-        <todoContext.Provider value={{data, parentFolders, isLoading, isInvalidPage, createFolder, getFolderData, updateFolder, deleteFolder, createTodo, getTodoData, deleteTodo, addTodo, updateTodoHeader, updateTodoContent, deleteTodoContent}} >
+        <todoContext.Provider value={{data, parentFolders, isLoading, isInvalidPage, createFolder, getFolderData, getOnlyFolder, updateFolder, deleteFolder, createTodo, getTodoData, deleteTodo, addTodo, updateTodoHeader, updateTodoContent, deleteTodoContent}} >
             {children}
         </todoContext.Provider>
     )

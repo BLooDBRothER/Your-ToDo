@@ -6,16 +6,18 @@ import { ModalOpenType } from '.'
 import { useRouter } from 'next/navigation'
 import { TodoContextType, useTodoContext } from '@/context/TodoContext'
 import { dropdownMenuItem } from '@/lib/contextMenuItem'
+import { OpenMoveModalType } from './TodoBody'
 
 type FolderPropType = {
     id: string
     name: string
     openModal: ModalOpenType
+    openMoveModal: OpenMoveModalType
 }
 
 
 
-const Folder = ({ id, name, openModal }: FolderPropType) => {
+const Folder = ({ id, name, openModal, openMoveModal }: FolderPropType) => {
     const { modal, message } = App.useApp();
     const router = useRouter();
 
@@ -65,7 +67,9 @@ const Folder = ({ id, name, openModal }: FolderPropType) => {
     }
 
     const handleDropdownMenuClick = ({ key }: { key: string }) => {
-        key === "rename" ? openModal("rename", id, name) : showDeleteConfirm();
+        key === "rename" && openModal("rename", id, name)
+        key === "move" && openMoveModal(id, name);
+        key === "delete" && showDeleteConfirm();
     }
 
     useEffect(() => {
