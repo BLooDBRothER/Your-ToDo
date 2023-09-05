@@ -8,7 +8,7 @@ const themeConfig: ThemeConfig = {
   },
   "components": {
     "Input": {
-      "colorBgContainer": "rgba(34, 34, 37, 0.7)"
+      "colorBgContainer": "rgba(34, 34, 37, 0.7)",
     },
     "Tree": {
       "controlItemBgActive": "#222225",

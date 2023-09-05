@@ -1,6 +1,6 @@
 import { FolderType, TodoContextType, useTodoContext } from '@/context/TodoContext';
-import { ArrowRightOutlined, CloseOutlined, FolderFilled } from '@ant-design/icons'
-import { Divider, Modal, Spin, Tree } from 'antd'
+import { ArrowRightOutlined, CloseOutlined, FolderFilled, HomeFilled, UnorderedListOutlined } from '@ant-design/icons'
+import { App, Divider, Modal, Spin, Tree } from 'antd'
 import { DataNode } from 'antd/es/tree'
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -13,6 +13,17 @@ type MoveModalPropsType = {
     isOpen: boolean
     closeModal: () => void
 }
+
+const INIT_TREE_DATA: DataNode[] = [
+    {
+        title: <div className='flex items-center gap-2'>
+                    <HomeFilled />
+                    <span>Home</span>
+                </div>,
+        key: 'null' ,
+        isLeaf: false,
+    }
+]
 
 const formatFolderToTreeData = (folders: FolderType[], sourceKey: string): DataNode[] => {
     if(folders.length === 0){
@@ -41,6 +52,7 @@ const formatFolderToTreeData = (folders: FolderType[], sourceKey: string): DataN
 }
 
 const updateTreeData = (list: DataNode[], key: React.Key, children: FolderType[], sourceKey: string): DataNode[] => {
+    console.log(list)
     return list.map(node => {
         return {
             ...node,
@@ -49,18 +61,28 @@ const updateTreeData = (list: DataNode[], key: React.Key, children: FolderType[]
     })
 }
 
-const MoveModal = ({ type = "Folder", source, isOpen, closeModal }: MoveModalPropsType) => {
+const MoveModal = ({ type, source, isOpen, closeModal }: MoveModalPropsType) => {
+    const { message } = App.useApp();
+    const { getOnlyFolder, moveData } = useTodoContext() as TodoContextType
 
-    const { getOnlyFolder } = useTodoContext() as TodoContextType
-
-    const [treeData, setTreeData] = useState<DataNode[]>([]);
+    const [treeData, setTreeData] = useState<DataNode[]>(INIT_TREE_DATA);
     const [loading, setLoading] = useState(true);
     const [destination, setDestination] = useState('');
 
-    const destinationKey = useRef('');
+    const destinationKey = useRef<null | string>('');
+
+    const showMessage = (isSuccess: boolean) => {
+        isSuccess ? message.success(`Moved Successfully`) : message.error("Error - Please Try Again")
+    }
+
+    const move = async () => {
+        const res = await moveData(source.id, destinationKey.current, type === "Folder" ? true : false);
+        showMessage(res);
+        closeModal();
+    }
 
     const onLoadData = async ({ key, children }: any) => {
-        if (children)
+        if (children || key === "null")
             return true
         const id = key.split(':')[0]
         const folderData = await getOnlyFolder(id);
@@ -69,17 +91,19 @@ const MoveModal = ({ type = "Folder", source, isOpen, closeModal }: MoveModalPro
         })
     }
 
-    const onSelect = (selectedKeys: React.Key[], e:any) => {
-        const keyData = selectedKeys[0].toString().split(':');
+    const onSelect = (selectedKeys: React.Key[]) => {
+
+        const keyData = selectedKeys[0] === "null" ? [null, 'home'] : selectedKeys[0].toString().split(':');
         destinationKey.current = keyData[0];
-        console.log(destinationKey.current)
-        setDestination(keyData[1]);
+        setDestination(keyData[1] as string);
     }
 
     const getHomeFolder = async () => {
         const folderData = await getOnlyFolder(null);
         setLoading(false);
-        setTreeData(formatFolderToTreeData(folderData, source.id));
+        setTreeData(prev => {
+            return updateTreeData(prev, 'null', folderData, source.id)
+        })
     }
 
     useEffect(() => {
@@ -91,17 +115,27 @@ const MoveModal = ({ type = "Folder", source, isOpen, closeModal }: MoveModalPro
         <Modal open={isOpen} title={
             <>
                 <div className='flex items-center justify-start gap-2'>
-                    <FolderFilled className='text-xl' />
+                    {
+                        type === "Folder" ?
+                        <FolderFilled className='text-xl' /> :
+                        <UnorderedListOutlined className='text-xl' />
+                    }
                     <span>Move {type}</span>
                 </div>
                 <Divider className='!my-4' />
             </>
         }
+            okText="Move"
+            onOk={move}
             onCancel={closeModal}
         >
             <div className='mb-2 flex items-center justify-start gap-2'>
                 <div className='bg-primary rounded-md w-fit px-2 py-1'>
-                    <FolderFilled className='mr-1' />
+                    {
+                        type === "Folder" ?
+                        <FolderFilled className='mr-1' /> :
+                        <UnorderedListOutlined className='mr-1' />
+                    }
                     <span>{source.name}</span>
                 </div>
                 <ArrowRightOutlined />
@@ -112,7 +146,7 @@ const MoveModal = ({ type = "Folder", source, isOpen, closeModal }: MoveModalPro
             </div>
             <Spin spinning={loading} tip="Fetching Folder">
                 <div className='text-xl p-2 bg-primary rounded-md min-h-[50px]'>
-                    <Tree.DirectoryTree loadData={onLoadData} treeData={treeData} showIcon={false} onSelect={onSelect} />
+                    <Tree.DirectoryTree loadData={onLoadData} treeData={treeData} showIcon={false} onSelect={onSelect} defaultExpandedKeys={["null"]} />
                 </div>
             </Spin>
         </Modal>

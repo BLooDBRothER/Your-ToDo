@@ -20,6 +20,7 @@ export type TodoContextType = {
     updateTodoHeader: (todoId: string, title: string) => Promise<boolean>
     updateTodoContent: (todoId: string, todoContentId: string, field: "isCompleted" | "value", value: string | boolean) => Promise<boolean>
     deleteTodoContent: (todoId: string, todoContentId: string) => Promise<boolean>
+    moveData: (sourceID: string, destinationId: string | null, folderToFolder: boolean) => Promise<boolean>
 }
 
 type LoadingType = {
@@ -393,8 +394,24 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         }
     }
 
+    const moveData = async (sourceId: string, destinationId: string | null, folderToFolder: boolean) => {
+        try {
+            await axios.patch(`/api/folder/move`, {sourceId, destinationId, folderToFolder});
+            setData(prev => {
+                const type = folderToFolder ? "folders" : "todo"
+                const updatedTodo = prev[type].filter(data => data.id !== sourceId);
+                    
+                return {...prev, [type]: updatedTodo}
+            });
+            return true
+        }
+        catch {
+            return false;
+        }
+    }
+
     return (
-        <todoContext.Provider value={{data, parentFolders, isLoading, isInvalidPage, createFolder, getFolderData, getOnlyFolder, updateFolder, deleteFolder, createTodo, getTodoData, deleteTodo, addTodo, updateTodoHeader, updateTodoContent, deleteTodoContent}} >
+        <todoContext.Provider value={{data, parentFolders, isLoading, isInvalidPage, createFolder, getFolderData, getOnlyFolder, updateFolder, deleteFolder, createTodo, getTodoData, deleteTodo, addTodo, updateTodoHeader, updateTodoContent, deleteTodoContent, moveData}} >
             {children}
         </todoContext.Provider>
     )

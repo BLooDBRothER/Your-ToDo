@@ -68,7 +68,7 @@ const Folder = ({ id, name, openModal, openMoveModal }: FolderPropType) => {
 
     const handleDropdownMenuClick = ({ key }: { key: string }) => {
         key === "rename" && openModal("rename", id, name)
-        key === "move" && openMoveModal(id, name);
+        key === "move" && openMoveModal(id, name, "Folder");
         key === "delete" && showDeleteConfirm();
     }
 

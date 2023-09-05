@@ -5,14 +5,16 @@ import Image from 'next/image'
 import React, { useEffect, useRef, useState } from 'react'
 import { TodoModalOpenType } from '.'
 import { TodoContextType, TodoType, useTodoContext } from '@/context/TodoContext'
-import { title } from 'process'
+import { OpenMoveModalType } from './TodoBody'
 
 type TodoFilePropstype = {
     todo: TodoType
     openTodoModal: TodoModalOpenType
+    openMoveModal: OpenMoveModalType
+
 }
 
-const TodoFile = ({ todo, openTodoModal }: TodoFilePropstype) => {
+const TodoFile = ({ todo, openTodoModal, openMoveModal }: TodoFilePropstype) => {
     const { modal, message } = App.useApp();
 
     const { deleteTodo } = useTodoContext() as TodoContextType;
@@ -57,8 +59,9 @@ const TodoFile = ({ todo, openTodoModal }: TodoFilePropstype) => {
     }
 
     const handleDropdownMenuClick = ({ key }: { key: string }) => {
-        console.log(key)
-        key === "rename" ? openTodoModal(todo, true, false, true) : showDeleteConfirm();
+        key === "rename" && openTodoModal(todo, true, false, true);
+        key === "move" && openMoveModal(todo.id, todo.title, "Todo")
+        key === "delete" && showDeleteConfirm();
     }
 
     useEffect(() => {

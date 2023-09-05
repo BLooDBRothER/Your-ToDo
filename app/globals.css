@@ -37,3 +37,7 @@
     grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
     @apply gap-4;
 }
+
+.ant-tree.ant-tree-directory .ant-tree-treenode-selected::before {
+    @apply !bg-secondary rounded-md;
+}
