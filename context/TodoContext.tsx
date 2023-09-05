@@ -9,7 +9,7 @@ export type TodoContextType = {
     parentFolders: FolderType[]
     isInvalidPage: boolean
     getFolderData: (folderId: string | null) => void
-    getOnlyFolder: (folderId: string | null) => Promise<FolderType[]>
+    getOnlyFolder: (folderId?: string | null) => Promise<FolderType[]>
     createFolder: (name: string, folderId: string | null) => Promise<boolean>
     updateFolder: (name: string, folderId: string) => Promise<boolean>
     deleteFolder: (folderId: string) => Promise<boolean>
@@ -59,13 +59,13 @@ export const useTodoContext = () => useContext(todoContext);
 
 const TodoContextProvider = ({ children }: { children: ReactNode}) => {
 
-    const [data, setData] = useState<DataType>({
+    const [data, setData] = useState<TodoContextType["data"]>({
         folders: [],
         todo: []
     });
-    const [parentFolders, setParentFolder] = useState<FolderType[]>([]);
-    const [isInvalidPage, setInvalidPage] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState<LoadingType>({
+    const [parentFolders, setParentFolder] = useState<TodoContextType["parentFolders"]>([]);
+    const [isInvalidPage, setInvalidPage] = useState<TodoContextType["isInvalidPage"]>(false);
+    const [isLoading, setIsLoading] = useState<TodoContextType["isLoading"]>({
         folder: true,
         todo: false,
         todoCreating: false,
@@ -74,7 +74,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
     })
 
     // ---------------------------- Folder Methods ---------------------------------
-    const createFolder = async (name: string, folderId: string | null) => {
+    const createFolder: TodoContextType["createFolder"] = async (name, folderId) => {
         try{
             const res = await axios.post("/api/folder", {name, folderId});
 
@@ -146,7 +146,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         }
     }, [])
 
-    const getOnlyFolder = async (folderId: string | null = null) => {;
+    const getOnlyFolder: TodoContextType["getOnlyFolder"] = async (folderId = null) => {;
 
         const uri = folderId ? `/api/folder/${folderId}/?onlyFolder=true` : '/api/folder/?onlyFolder=true';
 
@@ -399,7 +399,17 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
             await axios.patch(`/api/folder/move`, {sourceId, destinationId, folderToFolder});
             setData(prev => {
                 const type = folderToFolder ? "folders" : "todo"
-                const updatedTodo = prev[type].filter(data => data.id !== sourceId);
+
+                let currData: FolderType[] | TodoType[], updatedTodo: FolderType[] | TodoType[]
+                
+                if(folderToFolder){
+                    currData = prev[type] as FolderType[];
+                    updatedTodo = currData.filter(data => data.id !== sourceId) as FolderType[]
+                }
+                else{
+                    currData = prev[type] as TodoType[];
+                    updatedTodo = currData.filter(data => data.id !== sourceId) as TodoType[]
+                }
                     
                 return {...prev, [type]: updatedTodo}
             });

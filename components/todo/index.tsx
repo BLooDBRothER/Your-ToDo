@@ -55,8 +55,7 @@ const Todo = ( {folderId }: {folderId: string | null}) => {
         type === "todo" && setTodoModal(TODO_MODEL_INITIAL_VALUE)
     }
 
-    const openModal = (type: "create" | "rename", id: string | null = null, name: string = '') => {
-        console.log('kille')
+    const openModal: ModalOpenType = (type, id = null, name = '') => {
         setNameModal({type, isOpen: true, id, name})
     }
 
@@ -78,7 +77,7 @@ const Todo = ( {folderId }: {folderId: string | null}) => {
         
     }, [folderId, createTodo, message])
 
-    const openTodoModal = (todo: TodoType | null, isOpen:boolean, isCreate: boolean, isRename: boolean) => {
+    const openTodoModal: TodoModalOpenType = (todo, isOpen, isCreate, isRename) => {
         setTodoModal({todoItem: todo || TODO_INITIAL_VALUE, isOpen, isRename});
         isCreate && createNewTodo()
     }
