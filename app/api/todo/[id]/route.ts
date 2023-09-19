@@ -19,7 +19,7 @@ export async function GET(_: Request, { params }: { params: {id: string}}) {
                 select: {
                     id: true,
                     value: true,
-                    isCompleted: true
+                    isCompleted: true,
                 },
                 orderBy: {
                     createdAt: 'asc'
@@ -53,20 +53,21 @@ export async function POST(request: Request, { params }: { params: {id: string}}
 }
 
 export async function PATCH(request: Request, { params }: { params: {id: string}}){
-    const { title } = await request.json();
+    const { title, dueDate } = await request.json();
   
     const session = await getServerSession(authOptions);
     
     if(!session) return NextResponse.json({"message": "Please Login"}, {status: 401});
     const userId = session.user.id as string;
-    
+
     await prisma.todo.update({
         where: {
             id: params.id,
             createdBy: userId
         },
          data: {
-            title
+            ...(title && { title }),
+            ...(dueDate && { dueDate })
          }
     })
 

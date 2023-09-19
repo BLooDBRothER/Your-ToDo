@@ -39,14 +39,15 @@ model Folder {
 }
 
 model Todo {
-  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id             String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title          String
   folderId       String?    @map("folder_id") @db.Uuid
   folder         Folder?    @relation(fields: [folderId], references: [id], onDelete: Cascade) 
-  user           User?     @relation(fields: [createdBy], references: [id])
-  createdBy      String    @db.Uuid @map("created_by")
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
+  user           User?      @relation(fields: [createdBy], references: [id])
+  dueDate        DateTime?  @map("due_date")
+  createdBy      String     @db.Uuid @map("created_by")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
 
   todoContent    TodoContent[]
 

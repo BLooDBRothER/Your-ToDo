@@ -11,7 +11,7 @@ type NameModalPropsType = NameModalType & {
 const NameModal = ({ type, isOpen, name, id, parentFolderId, closeModal }: NameModalPropsType) => {
 
   const { message } = App.useApp();
-  const { createFolder, updateFolder } = useTodoContext() as TodoContextType;
+  const { createFolder, updateFolder, isLoading } = useTodoContext() as TodoContextType;
 
   const [folderName, setFolderName] = useState(name || 'Untitled');
   const [error, setError] = useState('')
@@ -55,7 +55,7 @@ const NameModal = ({ type, isOpen, name, id, parentFolderId, closeModal }: NameM
   }, [isOpen])
 
   return (
-    <Modal title={`${type === "create" ? "New" : "Update"} Folder`} open={isOpen} okText={`${type === "create" ? "Create" : "Rename"}`} onOk={type === "create" ? createNewFolder : updateCurrentFolder} onCancel={closeModal.bind(null, "folder")}>
+    <Modal title={`${type === "create" ? "New" : "Update"} Folder`} open={isOpen} confirmLoading={isLoading.folderEdit} okText={`${type === "create" ? "Create" : "Rename"}`} onOk={type === "create" ? createNewFolder : updateCurrentFolder} onCancel={closeModal.bind(null, "folder")}>
       <Input placeholder='Enter Folder Name' value={folderName} status={`${error ? 'error' : ''}`} onChange={(e) => {
         setError('');
         setFolderName(e.target.value)

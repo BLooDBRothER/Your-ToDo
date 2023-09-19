@@ -19,7 +19,7 @@ export async function GET(request: NextRequest){
     if(onlyFolder)
         return NextResponse.json({"msg": "ok", folders: data.rows, todo: []})
         
-    const todoQuery = "SELECT title, id FROM public.todo WHERE created_by = $1 and folder_id IS NULL ORDER BY created_at"
+    const todoQuery = "SELECT title, id, due_date as duedate FROM public.todo WHERE created_by = $1 and folder_id IS NULL ORDER BY created_at"
     const todoData = await conn?.query(todoQuery, [userId])
 
     return NextResponse.json({"msg": "ok", folders: data.rows, todo: todoData.rows})

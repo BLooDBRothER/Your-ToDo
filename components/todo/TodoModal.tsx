@@ -1,10 +1,11 @@
 import { BorderOutlined, CheckOutlined, CheckSquareOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, Divider, Input, InputRef, Modal, Segmented, Skeleton, Space, Spin } from 'antd'
+import { Button, DatePicker, DatePickerProps, Divider, Input, InputRef, Modal, Segmented, Skeleton, Space, Spin } from 'antd'
 import React, { useEffect, useRef, useState } from 'react'
 import { TodoModalType } from '.'
 import { TodoContextType, TodoType, useTodoContext } from '@/context/TodoContext'
 import NoData from '../NoData'
 import TodoLoading from './TodoLoading'
+import dayjs from 'dayjs'
 
 type TodoModalPropsType = TodoModalType & {
   isRename: boolean
@@ -69,10 +70,9 @@ const FILTER_OPTIONS = ["All", "Finished", "Pending"]
 
 const TodoModal = ({ todoItem, isOpen, isRename, closeModal  }: TodoModalPropsType) => {
 
-  const { data, isLoading, getTodoData, addTodo, updateTodoHeader, updateTodoContent, deleteTodoContent } = useTodoContext() as TodoContextType
+  const { data, isLoading, getTodoData, addTodo, updateTodo, updateTodoContent, deleteTodoContent } = useTodoContext() as TodoContextType
 
   const todo: TodoType = data.todo.find(each => each.id === todoItem.id) || todoItem; 
-
   
   const [todoTitle, setTitle] = useState(todo.title);
   const [todoValue, setTodoValue] = useState('');
@@ -92,7 +92,7 @@ const TodoModal = ({ todoItem, isOpen, isRename, closeModal  }: TodoModalPropsTy
   const updateTitle = async () => {
     if(!todo.id || !todoTitle || checkLoading()) return;
 
-    (todoTitle !== todo.title) && await updateTodoHeader(todo.id, todoTitle);
+    (todoTitle !== todo.title) && await updateTodo(todo.id, todoTitle);
 
     setEdit(false)
   }
@@ -118,7 +118,11 @@ const TodoModal = ({ todoItem, isOpen, isRename, closeModal  }: TodoModalPropsTy
     await deleteTodoContent(todo.id, todoContentId);
   }
 
-  console.log(todo)
+  const handleDateChange: DatePickerProps["onChange"] = async (date, dateString) => {
+    console.log(date, dateString)
+    const timeStamp = new Date(dateString);
+    await updateTodo(todo.id, null, timeStamp);
+  }
 
   // useEffect(() => {
   //   todo.id && setTodo(data.todo.find(each => each.id === todo.id) as TodoType)
@@ -172,7 +176,12 @@ const TodoModal = ({ todoItem, isOpen, isRename, closeModal  }: TodoModalPropsTy
           </Space.Compact>
         </div>
         <Divider className='!my-2' />
-        <Segmented options={FILTER_OPTIONS} className='!bg-primary' value={filter} onChange={(filterValue) => { setFilter(filterValue as string)}} />
+        <div className='flex justify-between items-center'>
+          <Segmented options={FILTER_OPTIONS} className='!bg-primary' value={filter} onChange={(filterValue) => { setFilter(filterValue as string)}} />
+          <DatePicker placeholder='Due Date'  onChange={handleDateChange} {...(todo.duedate && {defaultValue: dayjs(todo.duedate)})} disabledDate={(current) => {
+            return current.diff(new Date(), 'days') < 0
+          }} />
+        </div>
       </div>
     }
       footer={false}

@@ -14,13 +14,17 @@
     "@ant-design/cssinjs": "^1.16.2",
     "@ant-design/icons": "^5.2.5",
     "@prisma/client": "^5.1.1",
+    "@sendgrid/mail": "^7.7.0",
     "@types/node": "20.5.0",
     "@types/pg": "^8.10.2",
     "@types/react": "18.2.20",
     "@types/react-dom": "18.2.7",
+    "@upstash/qstash": "^2.1.2",
     "antd": "^5.8.3",
     "autoprefixer": "10.4.15",
     "axios": "^1.4.0",
+    "crypto-js": "^4.1.1",
+    "dayjs": "^1.11.9",
     "eslint": "8.47.0",
     "eslint-config-next": "13.4.17",
     "next": "13.4.17",
@@ -33,6 +37,7 @@
     "typescript": "5.1.6"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.1.2",
     "prisma": "^5.1.1"
   }
 }

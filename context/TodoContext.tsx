@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { useContext, createContext, ReactNode, useState, useEffect, useCallback } from "react";
+import { useContext, createContext, ReactNode, useState, useCallback } from "react";
 
 export type TodoContextType = {
     data: DataType
@@ -17,7 +17,7 @@ export type TodoContextType = {
     getTodoData: (todoId: string) => Promise<boolean>
     deleteTodo: (todoId: string) => Promise<boolean>
     addTodo: (todoId: string, value: string) => Promise<boolean>
-    updateTodoHeader: (todoId: string, title: string) => Promise<boolean>
+    updateTodo: (todoId: string, title?: string | null, date?: Date | null) => Promise<boolean>
     updateTodoContent: (todoId: string, todoContentId: string, field: "isCompleted" | "value", value: string | boolean) => Promise<boolean>
     deleteTodoContent: (todoId: string, todoContentId: string) => Promise<boolean>
     moveData: (sourceID: string, destinationId: string | null, folderToFolder: boolean) => Promise<boolean>
@@ -26,6 +26,7 @@ export type TodoContextType = {
 type LoadingType = {
     folder: boolean
     todo: boolean
+    folderEdit: boolean
     todoCreating: boolean
     todoTitle: boolean
     todoContent: boolean
@@ -45,6 +46,7 @@ type TodoContentType = {
 export type TodoType = {
     id: string
     title: string
+    duedate?: Date
     todoContent: TodoContentType[]
 }
 
@@ -68,6 +70,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
     const [isLoading, setIsLoading] = useState<TodoContextType["isLoading"]>({
         folder: true,
         todo: false,
+        folderEdit: false,
         todoCreating: false,
         todoTitle: false,
         todoContent: false
@@ -75,6 +78,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
 
     // ---------------------------- Folder Methods ---------------------------------
     const createFolder: TodoContextType["createFolder"] = async (name, folderId) => {
+        setIsLoading(prev => ({...prev, folderEdit: true}))
         try{
             const res = await axios.post("/api/folder", {name, folderId});
 
@@ -96,6 +100,9 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
                 return false;
             }
             return false;
+        }
+        finally{
+            setIsLoading(prev => ({...prev, folderEdit: false}))
         }
     }
 
@@ -168,7 +175,8 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         }
     }
 
-    const updateFolder = async (folderId: string, name: string) => {
+    const updateFolder: TodoContextType["updateFolder"] = async (folderId, name) => {
+        setIsLoading(prev => ({...prev, folderEdit: true}))
         try {
             await axios.patch(`/api/folder/${folderId}`, {
                 name
@@ -191,9 +199,12 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         catch(err: unknown) {
             return false
         }
+        finally{
+            setIsLoading(prev => ({...prev, folderEdit: false}))
+        }
     }
 
-    const deleteFolder = async (folderId: string) => {
+    const deleteFolder: TodoContextType["deleteFolder"] = async (folderId) => {
         try {
             await axios.delete(`/api/folder/${folderId}`);
 
@@ -213,7 +224,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
     }
 
     // ---------------------------- Todo Methods ---------------------------------
-    const createTodo = async (folderId: string | null) => {
+    const createTodo: TodoContextType["createTodo"] = async (folderId) => {
         const title = "Untitled";
         try{
             setIsLoading(prev => ({...prev, todoCreating: true}));
@@ -246,7 +257,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         }
     }
 
-    const getTodoData = async (todoId: string) => {
+    const getTodoData: TodoContextType["getTodoData"] = async (todoId) => {
         try{
             setIsLoading(prev => ({...prev, todo: true}));
             const res = await axios.get(`/api/todo/${todoId}`);
@@ -277,7 +288,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         }
     }
 
-    const addTodo = async (todoId: string, value: string) => {
+    const addTodo: TodoContextType["addTodo"] = async (todoId, value) => {
         try{
             setIsLoading(prev => ({...prev, todoContent: true}));
             const res = await axios.post(`/api/todo/${todoId}`, {value});
@@ -309,7 +320,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         }
     }
 
-    const deleteTodo = async (todoId: string) => {
+    const deleteTodo: TodoContextType["deleteTodo"] = async (todoId) => {
         try{
             await axios.delete(`/api/todo/${todoId}`);
 
@@ -324,11 +335,11 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         }
     }
 
-    const updateTodoHeader = async (todoId: string, title: string) => {
+    const updateTodo: TodoContextType["updateTodo"] = async (todoId, title = null, dueDate = null) => {
         try{
             setIsLoading(prev => ({...prev, todoTitle: true}));
-            await axios.patch(`/api/todo/${todoId}`, {title});
-            setData(prev => {
+            await axios.patch(`/api/todo/${todoId}`, {title, dueDate});
+            title && setData(prev => {
                 const prevCpy = [...prev.todo];
                 
                 const updatedTodo = prevCpy.map(todo => {
@@ -350,7 +361,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         }
     }
 
-    const updateTodoContent = async (todoId: string, todoContentId: string, field: "isCompleted" | "value", value: string | boolean) => {
+    const updateTodoContent: TodoContextType["updateTodoContent"] = async (todoId, todoContentId, field, value) => {
         try{
             await axios.patch(`/api/todo/${todoId}/${todoContentId}`, {field, value})
             setData(prev => {
@@ -375,7 +386,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         }
     }
 
-    const deleteTodoContent = async (todoId: string, todoContentId: string) => {
+    const deleteTodoContent: TodoContextType["deleteTodoContent"] = async (todoId, todoContentId) => {
         try {
             await axios.delete(`/api/todo/${todoId}/${todoContentId}`);
             setData(prev => {
@@ -394,7 +405,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         }
     }
 
-    const moveData = async (sourceId: string, destinationId: string | null, folderToFolder: boolean) => {
+    const moveData: TodoContextType["moveData"] = async (sourceId, destinationId, folderToFolder) => {
         try {
             await axios.patch(`/api/folder/move`, {sourceId, destinationId, folderToFolder});
             setData(prev => {
@@ -421,7 +432,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
     }
 
     return (
-        <todoContext.Provider value={{data, parentFolders, isLoading, isInvalidPage, createFolder, getFolderData, getOnlyFolder, updateFolder, deleteFolder, createTodo, getTodoData, deleteTodo, addTodo, updateTodoHeader, updateTodoContent, deleteTodoContent, moveData}} >
+        <todoContext.Provider value={{data, parentFolders, isLoading, isInvalidPage, createFolder, getFolderData, getOnlyFolder, updateFolder, deleteFolder, createTodo, getTodoData, deleteTodo, addTodo, updateTodo, updateTodoContent, deleteTodoContent, moveData}} >
             {children}
         </todoContext.Provider>
     )
