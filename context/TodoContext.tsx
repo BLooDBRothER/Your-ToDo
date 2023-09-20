@@ -17,7 +17,7 @@ export type TodoContextType = {
     getTodoData: (todoId: string) => Promise<boolean>
     deleteTodo: (todoId: string) => Promise<boolean>
     addTodo: (todoId: string, value: string) => Promise<boolean>
-    updateTodo: (todoId: string, title?: string | null, date?: Date | null) => Promise<boolean>
+    updateTodo: (todoId: string, field: 'title' | 'dueDate', value: string | Date | null) => Promise<boolean>
     updateTodoContent: (todoId: string, todoContentId: string, field: "isCompleted" | "value", value: string | boolean) => Promise<boolean>
     deleteTodoContent: (todoId: string, todoContentId: string) => Promise<boolean>
     moveData: (sourceID: string, destinationId: string | null, folderToFolder: boolean) => Promise<boolean>
@@ -335,16 +335,16 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         }
     }
 
-    const updateTodo: TodoContextType["updateTodo"] = async (todoId, title = null, dueDate = null) => {
+    const updateTodo: TodoContextType["updateTodo"] = async (todoId, field, value) => {
         try{
             setIsLoading(prev => ({...prev, todoTitle: true}));
-            await axios.patch(`/api/todo/${todoId}`, {title, dueDate});
-            title && setData(prev => {
+            await axios.patch(`/api/todo/${todoId}`, {field, value});
+            setData(prev => {
                 const prevCpy = [...prev.todo];
                 
                 const updatedTodo = prevCpy.map(todo => {
                     if(todo.id === todoId){
-                        todo.title = title;
+                        todo[field === "dueDate" ? "duedate": field] = value as string & Date
                     }
                     return todo;
                 })

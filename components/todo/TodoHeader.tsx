@@ -40,11 +40,11 @@ const TodoHeader = ({ openModal, openTodoModal }: TodoHeaderPropsType) => {
     }
 
     return (
-        <div className='p-2 bg-primary rounded-md flex items-center justify-between gap-2 sticky top-0 left-0 z-10'>
+        <div className='p-2 bg-primary rounded-md flex flex-col items-center justify-between gap-2 relative sm:sticky top-0 left-0 z-10 sm:flex-row'>
             <Dropdown menu={{items: newButtonItems, inlineIndent: 50, onClick: handleDropdownMenuClick}}>
                 <Button type="primary" icon={<PlusOutlined />} >New</Button>
             </Dropdown>
-            <Search placeholder="input search text" onSearch={onSearch} enterButton className='!w-[400px]' />
+            <Search placeholder="input search text" onSearch={onSearch} enterButton className='w-full sm:!w-[400px]' />
             <Segmented options={filterOptions} />
         </div>
     )

@@ -41,7 +41,7 @@ const TodoItem = ({ id, value, isChecked, updateTodo, deleteTodo }: TodoItemType
     return (<></>)
 
   return (
-    <div className={`bg-primary p-4 my-2 rounded-lg text-xl flex items-center justify-start hover:bg-primary/80 cursor-pointer border ${isCompleted ? 'border-accent/60' : 'border-transparent'}`} onClick={updateCompleteStatus}>
+    <div className={`bg-primary py-2 px-4 my-2 rounded-lg text-lg flex items-center justify-start hover:bg-primary/80 cursor-pointer border ${isCompleted ? 'border-accent/60' : 'border-transparent'}`} onClick={updateCompleteStatus}>
       {
         !isEdit ?
           <div className='flex-1'>
@@ -92,7 +92,7 @@ const TodoModal = ({ todoItem, isOpen, isRename, closeModal  }: TodoModalPropsTy
   const updateTitle = async () => {
     if(!todo.id || !todoTitle || checkLoading()) return;
 
-    (todoTitle !== todo.title) && await updateTodo(todo.id, todoTitle);
+    (todoTitle !== todo.title) && await updateTodo(todo.id, "title", todoTitle);
 
     setEdit(false)
   }
@@ -119,9 +119,8 @@ const TodoModal = ({ todoItem, isOpen, isRename, closeModal  }: TodoModalPropsTy
   }
 
   const handleDateChange: DatePickerProps["onChange"] = async (date, dateString) => {
-    console.log(date, dateString)
-    const timeStamp = new Date(dateString);
-    await updateTodo(todo.id, null, timeStamp);
+    const timeStamp = date ? new Date(dateString) : null;
+    await updateTodo(todo.id, "dueDate", timeStamp);
   }
 
   // useEffect(() => {
@@ -151,7 +150,7 @@ const TodoModal = ({ todoItem, isOpen, isRename, closeModal  }: TodoModalPropsTy
   }, [])
 
   return (
-    <Modal open={isOpen} bodyStyle={{ overflowY: "auto" }} className='!h-[65vh] !w-[70vw]'  title={
+    <Modal open={isOpen} bodyStyle={{ overflowY: "auto" }} className='!w-[98vw] sm:!h-[65vh] sm:!w-[75vw] lg:!w-[70vw]'  title={
       <div className='relative'>
         <Spin spinning={isLoading.todoContent} className='!absolute bottom-[.5rem] right-[0rem]' />
         <div className='text-xl  relative'>
@@ -170,7 +169,7 @@ const TodoModal = ({ todoItem, isOpen, isRename, closeModal  }: TodoModalPropsTy
           </div>
         </div>
         <div className=' rounded-lg flex items-center justify-center mt-2'>
-          <Space.Compact style={{ width: '70%' }} className=' bg-primary p-4 rounded-lg'>
+          <Space.Compact className='!w-full sm:!w-[75%] bg-primary p-4 rounded-lg'>
             <Input placeholder='Enter Your TODO' value={todoValue} onPressEnter={addNewTodo} onChange={(e) => {setTodoValue(e.target.value)}} />
             <Button type="primary" icon={<PlusOutlined />} onClick={addNewTodo} >Add</Button>
           </Space.Compact>

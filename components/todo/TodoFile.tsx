@@ -1,11 +1,12 @@
 import { dropdownMenuItem } from '@/lib/contextMenuItem'
-import { DeleteOutlined, MoreOutlined, UnorderedListOutlined } from '@ant-design/icons'
-import { App, Card, Dropdown } from 'antd'
+import { ClockCircleFilled, DeleteOutlined, MoreOutlined, UnorderedListOutlined } from '@ant-design/icons'
+import { App, Card, Divider, Dropdown } from 'antd'
 import Image from 'next/image'
 import React, { useEffect, useRef, useState } from 'react'
 import { TodoModalOpenType } from '.'
 import { TodoContextType, TodoType, useTodoContext } from '@/context/TodoContext'
 import { OpenMoveModalType } from './TodoBody'
+import moment from 'moment'
 
 type TodoFilePropstype = {
     todo: TodoType
@@ -22,6 +23,10 @@ const TodoFile = ({ todo, openTodoModal, openMoveModal }: TodoFilePropstype) => 
     const [isDropDownOpen, setDropDownOpen] = useState(false);
 
     const dropCntRef = useRef<HTMLDivElement>(null);
+
+    const dueDateDiff = todo.duedate ? moment(todo.duedate).diff(moment(new Date()), 'days') : 10;
+
+    console.log(todo.title, ' -- ', todo.duedate);
 
     const showMessage = (isSuccess: boolean) => {
         isSuccess ? message.success(`Todo Deleted Successfully`) : message.error("Error - Please Try Again");
@@ -86,10 +91,20 @@ const TodoFile = ({ todo, openTodoModal, openMoveModal }: TodoFilePropstype) => 
         onClick={openTodoModal.bind(null, todo, true, false, false)}
         onContextMenu={triggerDropdown}
         hoverable
-        className='w-full !bg-primary hover:!bg-primary/80'
+        className='w-full !bg-primary hover:!bg-primary/80 todo-card'
         >
-            <div className='flex items-center justify-start gap-2 p-2 flex-1'>
+            <div className='flex items-center justify-start gap-2 px-2 flex-1'>
                 <h1 className='flex-1 text-lg'>{todo.title}</h1>
+            </div>
+            <Divider className='!my-2' />
+            <div className='flex items-center justify-start gap-2 px-2'>
+                <div className={`flex gap-2 items-center flex-1 ${dueDateDiff <= 3 ? '!text-red-500' : (dueDateDiff <=7 ? 'text-orange-300' : '')}`}>
+                    <ClockCircleFilled />
+                    <div>
+                        {/* <div>{moment(todo.duedate).format('ll')}  {moment(todo.duedate).diff(moment(new Date()), 'days')}</div> */}
+                        <div>{todo.duedate ? moment(todo.duedate).endOf('day').fromNow() : "No Due"}</div>
+                    </div>
+                </div>
                 <div className='hover:bg-light/10 rounded-md w-[18px] h-[28px] flex items-center justify-center' 
                 onClick={(e) => { 
                     e.stopPropagation(); 

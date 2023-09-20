@@ -1,4 +1,4 @@
-import { Skeleton } from 'antd'
+import { Divider, Skeleton } from 'antd'
 import React, { Fragment } from 'react'
 
 const loadingCompCount = Array(6).fill(0);
@@ -18,9 +18,11 @@ const TodoLoading = ({ type }: { type: "folder" | "todo" | "todoContent" }) => {
             }
             {
               type === "todo" &&
-              <div className='bg-primary flex flex-col items-center gap-4 rounded-lg text-lg w-full h-[318px]'>
-                <Skeleton.Image active className='!w-full !h-[220px]' />
-                <Skeleton paragraph={false} active className='!w-9/12 my-auto' />
+              <div className='bg-primary flex flex-col gap-2 rounded-lg text-lg w-[200px] h-[290px]'>
+                <Skeleton.Image active className='!w-full !h-[180px]' />
+                <Skeleton paragraph={false} active className='!w-11/12 px-4 my-auto' />
+                <Divider className='!my-0' />
+                <Skeleton paragraph={false} active className='!w-6/12 my-auto pb-2 px-4 self-start' />
               </div>
             }
             {

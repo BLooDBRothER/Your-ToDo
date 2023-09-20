@@ -53,7 +53,7 @@ export async function POST(request: Request, { params }: { params: {id: string}}
 }
 
 export async function PATCH(request: Request, { params }: { params: {id: string}}){
-    const { title, dueDate } = await request.json();
+    const { field, value } = await request.json();
   
     const session = await getServerSession(authOptions);
     
@@ -66,8 +66,7 @@ export async function PATCH(request: Request, { params }: { params: {id: string}
             createdBy: userId
         },
          data: {
-            ...(title && { title }),
-            ...(dueDate && { dueDate })
+            [field]: value
          }
     })
 

@@ -84,10 +84,10 @@ const TodoBody = ({ folderId, openModal, openTodoModal }: TodoBodyPropsType) => 
     return (
         <div>
             <div className='text-light mx-2 my-4'>
-                <Breadcrumb separator=">" items={breadcrumbItem}  />
+                <Breadcrumb separator=">" items={breadcrumbItem} />
             </div>
 
-            <div className='my-4 mx-2 text-2xl flex items-center justify-start gap-4'>
+            <div className='my-4 mx-2 text-lg flex items-center justify-start gap-4'>
                 <FolderFilled className='text-light/50' />
                 <h1>Folders</h1>
             </div>
@@ -106,7 +106,7 @@ const TodoBody = ({ folderId, openModal, openTodoModal }: TodoBodyPropsType) => 
 
             <Divider />
 
-            <div className='my-4 mx-2 text-2xl flex items-center justify-start gap-4'>
+            <div className='my-4 mx-2 text-lg flex items-center justify-start gap-4'>
                 <UnorderedListOutlined className='text-light/50' />
                 <h1>Todo</h1>
             </div>
