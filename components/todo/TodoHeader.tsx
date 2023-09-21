@@ -1,18 +1,18 @@
 import { FolderAddOutlined, PlusOutlined, UnorderedListOutlined } from '@ant-design/icons'
 import { Button, Dropdown, Input, MenuProps, Segmented } from 'antd'
 import React from 'react'
-import { ModalOpenType, TodoModalOpenType} from '.'
+import { ModalOpenType, TodoBodyFilterType, TodoModalOpenType} from '.'
 
 type TodoHeaderPropsType = {
+    filter: TodoBodyFilterType
+    setFilter:  React.Dispatch<React.SetStateAction<TodoBodyFilterType>>
     openModal: ModalOpenType
     openTodoModal: TodoModalOpenType
 }
 
-const { Search } = Input;
-
 const filterOptions = ["All", "Folder", "Todo"];
 
-const TodoHeader = ({ openModal, openTodoModal }: TodoHeaderPropsType) => {
+const TodoHeader = ({ openModal, openTodoModal, filter, setFilter }: TodoHeaderPropsType) => {
 
     const newButtonItems: MenuProps["items"] = [
         {
@@ -44,8 +44,8 @@ const TodoHeader = ({ openModal, openTodoModal }: TodoHeaderPropsType) => {
             <Dropdown menu={{items: newButtonItems, inlineIndent: 50, onClick: handleDropdownMenuClick}}>
                 <Button type="primary" icon={<PlusOutlined />} >New</Button>
             </Dropdown>
-            <Search placeholder="input search text" onSearch={onSearch} enterButton className='w-full sm:!w-[400px]' />
-            <Segmented options={filterOptions} />
+            <Input placeholder="input search text" onChange={(e) => {setFilter(prev => ({...prev, searchQuery: e.target.value}))}} value={filter.searchQuery} className='w-full sm:!w-[400px]' />
+            <Segmented options={filterOptions} value={filter.visibility} onChange={(filterValue) => {setFilter(prev => ({...prev, visibility: filterValue as string}))}} />
         </div>
     )
 }

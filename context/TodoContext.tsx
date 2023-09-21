@@ -4,7 +4,7 @@ import axios from "axios";
 import { useContext, createContext, ReactNode, useState, useCallback } from "react";
 
 export type TodoContextType = {
-    data: DataType
+    data: TodoDataType
     isLoading: LoadingType
     parentFolders: FolderType[]
     isInvalidPage: boolean
@@ -29,7 +29,7 @@ type LoadingType = {
     folderEdit: boolean
     todoCreating: boolean
     todoTitle: boolean
-    todoContent: boolean
+    todoContent: number[]
 }
 
 export type FolderType = {
@@ -41,6 +41,7 @@ type TodoContentType = {
     id: string
     value: string
     isCompleted: boolean
+    notSynced?: boolean
 }
 
 export type TodoType = {
@@ -50,7 +51,7 @@ export type TodoType = {
     todoContent: TodoContentType[]
 }
 
-type DataType = {
+export type TodoDataType = {
     folders: FolderType[]
     todo: TodoType[]
 }
@@ -73,7 +74,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         folderEdit: false,
         todoCreating: false,
         todoTitle: false,
-        todoContent: false
+        todoContent: []
     })
 
     // ---------------------------- Folder Methods ---------------------------------
@@ -290,20 +291,42 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
 
     const addTodo: TodoContextType["addTodo"] = async (todoId, value) => {
         try{
-            setIsLoading(prev => ({...prev, todoContent: true}));
+            const randomUUIDStr = crypto.randomUUID();
+            setData(prev => {
+                const prevCpy = [...prev.todo];
+                const updatedTodo = prevCpy.map(todo => {
+                    if(todo.id === todoId){
+                        todo.todoContent.push(
+                            {
+                                id: randomUUIDStr,
+                                value,
+                                isCompleted: false,
+                                notSynced: true
+                            }
+                        )
+                    }
+                    return todo;
+                })
+    
+                return {...prev, todo: updatedTodo}
+            });
+            setIsLoading(prev => {
+                prev.todoContent.push(0);
+                return prev;
+            });
             const res = await axios.post(`/api/todo/${todoId}`, {value});
             setData(prev => {
                 const prevCpy = [...prev.todo];
                 
                 const updatedTodo = prevCpy.map(todo => {
                     if(todo.id === todoId){
-                        todo.todoContent.push(
-                            {
-                                id: res.data.todoContentId,
-                                value,
-                                isCompleted: false
+                        todo.todoContent = todo.todoContent.map(todoContent => {
+                            if(todoContent.id === randomUUIDStr){
+                                todoContent.id = res.data.todoContentId,
+                                todoContent.notSynced = false;
                             }
-                        )
+                            return todoContent;
+                        })
                     }
                     return todo;
                 })
@@ -316,12 +339,19 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
             return false;
         }
         finally{
-            setIsLoading(prev => ({...prev, todoContent: false}));
+            setIsLoading(prev => {
+                prev.todoContent.pop();
+                return prev;
+            });
         }
     }
 
     const deleteTodo: TodoContextType["deleteTodo"] = async (todoId) => {
         try{
+            setIsLoading(prev => {
+                prev.todoContent.push(0);
+                return prev;
+            });
             await axios.delete(`/api/todo/${todoId}`);
 
             setData(prev => {
@@ -332,6 +362,12 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         }
         catch {
             return false
+        }
+        finally {
+            setIsLoading(prev => {
+                prev.todoContent.pop();
+                return prev;
+            });
         }
     }
 
@@ -363,6 +399,10 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
 
     const updateTodoContent: TodoContextType["updateTodoContent"] = async (todoId, todoContentId, field, value) => {
         try{
+            setIsLoading(prev => {
+                prev.todoContent.push(0);
+                return prev;
+            });
             await axios.patch(`/api/todo/${todoId}/${todoContentId}`, {field, value})
             setData(prev => {
                 const updatedTodo = prev.todo.map(todo => {
@@ -384,10 +424,21 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         catch (err: unknown){
             return false;
         }
+        finally{
+            setIsLoading(prev => {
+                prev.todoContent.pop();
+                return prev;
+            });
+        }
     }
 
     const deleteTodoContent: TodoContextType["deleteTodoContent"] = async (todoId, todoContentId) => {
         try {
+            console.log('delete todo')
+            setIsLoading(prev => {
+                prev.todoContent.push(0);
+                return prev;
+            });
             await axios.delete(`/api/todo/${todoId}/${todoContentId}`);
             setData(prev => {
                 const updatedTodo = prev.todo.map(todo => {
@@ -402,6 +453,12 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         }
         catch {
             return false;
+        }
+        finally {
+            setIsLoading(prev => {
+                prev.todoContent.pop();
+                return prev;
+            });
         }
     }
 

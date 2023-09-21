@@ -2,8 +2,8 @@ import { FolderFilled, HomeOutlined, UnorderedListOutlined } from '@ant-design/i
 import { Breadcrumb, Divider } from 'antd'
 import React, { useEffect, useState } from 'react'
 import Folder from './Folder'
-import { ModalOpenType, TodoModalOpenType } from '.'
-import { FolderType, TodoContextType, useTodoContext } from '@/context/TodoContext'
+import { ModalOpenType, TodoBodyFilterType, TodoModalOpenType } from '.'
+import { FolderType, TodoContextType, TodoDataType, useTodoContext } from '@/context/TodoContext'
 import TodoLoading from './TodoLoading'
 import NoData from '../NoData'
 import Link from 'next/link'
@@ -14,13 +14,16 @@ import MoveModal from './MoveModal'
 export type OpenMoveModalType = (id: string, name: string, type: "Folder" | "Todo") => void
 
 type TodoBodyPropsType = {
+    filter: TodoBodyFilterType
     folderId: string | null
     openModal: ModalOpenType
     openTodoModal: TodoModalOpenType
 }
 
-const TodoBody = ({ folderId, openModal, openTodoModal }: TodoBodyPropsType) => {
+const TodoBody = ({ filter, folderId, openModal, openTodoModal }: TodoBodyPropsType) => {
     const { data, isLoading, parentFolders, getFolderData } = useTodoContext() as TodoContextType;
+
+    const filteredDate: TodoDataType = filter.searchQuery ? {folders: data.folders.filter(folder => (new RegExp(filter.searchQuery, 'gi').test(folder.name))), todo: data.todo.filter(todo => (new RegExp(filter.searchQuery, 'gi').test(todo.title)))} : data;
 
     const [moveModalData, setMoveModalData] = useState({
         source: {
@@ -87,45 +90,57 @@ const TodoBody = ({ folderId, openModal, openTodoModal }: TodoBodyPropsType) => 
                 <Breadcrumb separator=">" items={breadcrumbItem} />
             </div>
 
-            <div className='my-4 mx-2 text-lg flex items-center justify-start gap-4'>
-                <FolderFilled className='text-light/50' />
-                <h1>Folders</h1>
-            </div>
+            {
+                (filter.visibility === "All" || filter.visibility === "Folder") &&
+                <>    
+                    <div className='my-4 mx-2 text-lg flex items-center justify-start gap-4'>
+                        <FolderFilled className='text-light/50' />
+                        <h1>Folders</h1>
+                    </div>
 
-            <div className='p-2 folder-todo-cnt sm:flex sm:items-center sm:justify-start gap-4 flex-wrap'>
-                {isLoading.folder ? 
-                    <TodoLoading type='folder' />:
-                    <>
-                        {data.folders.map(folder => (
-                            <Folder key={folder.id} id={folder.id} name={folder.name} openModal={openModal} openMoveModal={openMoveModal} />
-                        ))}
-                    </>
-                }
-                {data.folders.length === 0 && !isLoading.folder && <NoData description='No Folders' />}
-            </div>
+                    <div className='p-2 folder-todo-cnt sm:flex sm:items-center sm:justify-start gap-4 flex-wrap'>
+                        {isLoading.folder ? 
+                            <TodoLoading type='folder' />:
+                            <>
+                                {filteredDate.folders.map(folder => (
+                                    <Folder key={folder.id} id={folder.id} name={folder.name} openModal={openModal} openMoveModal={openMoveModal} />
+                                ))}
+                            </>
+                        }
+                        {filteredDate.folders.length === 0 && !isLoading.folder && <NoData description='No Folders' />}
+                    </div>
+                </>
+            }
 
-            <Divider />
+            {filter.visibility === "All" && <Divider />}
 
-            <div className='my-4 mx-2 text-lg flex items-center justify-start gap-4'>
-                <UnorderedListOutlined className='text-light/50' />
-                <h1>Todo</h1>
-            </div>
+            {
+                (filter.visibility === "All" || filter.visibility === "Todo") &&
+                <>    
+                    <div className='my-4 mx-2 text-lg flex items-center justify-start gap-4'>
+                        <UnorderedListOutlined className='text-light/50' />
+                        <h1>Todo</h1>
+                    </div>
 
-            {/* <div className='p-2 flex items-stretch justify-evenly sm:justify-start gap-4 flex-wrap'> */}
-            <div>
-                <div className='p-2 folder-todo-cnt'>
-                    {isLoading.folder ?
-                        <TodoLoading type='todo' /> :
-                        <>
-                            {data.todo.map(todo => (
-                                <TodoFile key={todo.id} todo={todo} openTodoModal={openTodoModal} openMoveModal={openMoveModal} />
-                            ))}
-                        </>
-                    }
-                </div>
-                
-                {data.todo.length === 0 && !isLoading.folder && <NoData description='No Todo' />}
-            </div>
+                    {/* <div className='p-2 flex items-stretch justify-evenly sm:justify-start gap-4 flex-wrap'> */}
+                    <div>
+                        <div className='p-2 folder-todo-cnt'>
+                            {isLoading.folder ?
+                                <TodoLoading type='todo' /> :
+                                <>
+                                    {filteredDate.todo.map(todo => (
+                                        <TodoFile key={todo.id} todo={todo} openTodoModal={openTodoModal} openMoveModal={openMoveModal} />
+                                    ))}
+                                </>
+                            }
+                        </div>
+                        
+                        {filteredDate.todo.length === 0 && !isLoading.folder && <NoData description='No Todo' />}
+                    </div>
+                </>
+
+            }
+
             {moveModalData.isOpen && <MoveModal type={moveModalData.type as "Folder" | "Todo"} source={moveModalData.source} isOpen={moveModalData.isOpen} closeModal={closeMoveModal} />}
         </div>
     )

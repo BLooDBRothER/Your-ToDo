@@ -1,6 +1,5 @@
-import { DeleteOutlined, EditOutlined, FolderOutlined, MoreOutlined } from '@ant-design/icons'
+import { DeleteOutlined, FolderFilled, MoreOutlined } from '@ant-design/icons'
 import { App, Dropdown, Tooltip } from 'antd'
-import { MenuItemType } from 'antd/es/menu/hooks/useItems'
 import React, { useEffect, useRef, useState } from 'react'
 import { ModalOpenType } from '.'
 import { useRouter } from 'next/navigation'
@@ -35,7 +34,7 @@ const Folder = ({ id, name, openModal, openMoveModal }: FolderPropType) => {
         modal.confirm({
             title: <div>
                 <div>Are you sure delete the Folder ?</div>
-                <div className='bg-primary p-1 rounded-md w-fit flex items-center gap-2 m-4'><FolderOutlined />{name}</div>
+                <div className='bg-primary p-1 rounded-md w-fit flex items-center gap-2 m-4'><FolderFilled />{name}</div>
             </div>,
             icon: <DeleteOutlined />,
             okText: 'Delete',
@@ -85,7 +84,7 @@ const Folder = ({ id, name, openModal, openMoveModal }: FolderPropType) => {
     return (
         <Dropdown menu={{ items: dropdownMenuItem, onClick: handleDropdownMenuClick }} open={isDropDownOpen} trigger={["contextMenu"]}>
             <div className='bg-primary p-4 flex flex-row items-center gap-4 w-full rounded-lg text-lg hover:bg-primary/80 sm:w-[250px]' onClick={navigate} ref={dropCntRef} role='button' onContextMenu={triggerDropdown}>
-                <FolderOutlined className='folder-ic' />
+                <FolderFilled className='folder-ic' />
                 <div className='flex-1 flex items-center'>
                     <Tooltip title={name} placement='top' mouseEnterDelay={0.5}>
                         <div className='flex-1 text-ellipsis overflow-hidden text-lg whitespace-nowrap'>{name}</div>

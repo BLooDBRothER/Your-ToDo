@@ -23,6 +23,11 @@ export type TodoModalType = {
     isRename: boolean
 }
 
+export type TodoBodyFilterType = {
+    visibility: string;
+    searchQuery: string;
+}
+
 const NAME_MODEL_INITIAL_VALUE: NameModalType = {
     id: null,
     isOpen: false,
@@ -49,6 +54,11 @@ const Todo = ( {folderId }: {folderId: string | null}) => {
 
     const [nameModal, setNameModal] = useState<NameModalType>(NAME_MODEL_INITIAL_VALUE);
     const [todoModal, setTodoModal] = useState<TodoModalType>(TODO_MODEL_INITIAL_VALUE);
+
+    const [filter, setFilter] = useState<TodoBodyFilterType>({
+        visibility: "All",
+        searchQuery: '',
+    });
 
     const closeModal = (type: "folder" | "todo") => {
         type === "folder" && setNameModal(NAME_MODEL_INITIAL_VALUE)
@@ -87,8 +97,8 @@ const Todo = ( {folderId }: {folderId: string | null}) => {
             {
                 !isInvalidPage ?
                 <div className='p-2 relative'>
-                    <TodoHeader openModal={openModal} openTodoModal={openTodoModal} />
-                    <TodoBody openModal={openModal} folderId={folderId} openTodoModal={openTodoModal}/>
+                    <TodoHeader openModal={openModal} openTodoModal={openTodoModal} filter={filter} setFilter={setFilter} />
+                    <TodoBody openModal={openModal} folderId={folderId} openTodoModal={openTodoModal} filter={filter}/>
 
                     {/* name modal */}
                     {nameModal.isOpen && <NameModal closeModal={closeModal} parentFolderId={folderId}  {...nameModal} />}

@@ -27,7 +27,7 @@ export async function POST(req: NextRequest){
     const t = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0,0 )
     console.log(parseDate(today), parseDate(later))
     
-    const query = "SELECT t.id todo_id, t.title, t.folder_id, u.email FROM public.todo t join public.users u on t.created_by = u.id AND t.due_date > $1 and t.due_date < $2 ORDER BY u.id";
+    const query = "SELECT t.id todo_id, t.title, t.folder_id, u.email FROM public.todo t join public.users u on t.created_by = u.id AND u.email_remainder AND t.due_date > $1 and t.due_date < $2 ORDER BY u.id";
     
     const data = await conn.query(query, [parseDate(today), parseDate(later)]);
 

@@ -18,7 +18,7 @@ const TodoLoading = ({ type }: { type: "folder" | "todo" | "todoContent" }) => {
             }
             {
               type === "todo" &&
-              <div className='bg-primary flex flex-col gap-2 rounded-lg text-lg w-[200px] h-[290px]'>
+              <div className='bg-primary flex flex-col gap-2 rounded-lg text-lg w-[180px] h-[290px]'>
                 <Skeleton.Image active className='!w-full !h-[180px]' />
                 <Skeleton paragraph={false} active className='!w-11/12 px-4 my-auto' />
                 <Divider className='!my-0' />

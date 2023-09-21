@@ -1,5 +1,5 @@
 import { BorderOutlined, CheckOutlined, CheckSquareOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, DatePicker, DatePickerProps, Divider, Input, InputRef, Modal, Segmented, Skeleton, Space, Spin } from 'antd'
+import { Button, DatePicker, DatePickerProps, Divider, Input, InputRef, Modal, Segmented, Space, Spin } from 'antd'
 import React, { useEffect, useRef, useState } from 'react'
 import { TodoModalType } from '.'
 import { TodoContextType, TodoType, useTodoContext } from '@/context/TodoContext'
@@ -26,6 +26,8 @@ const TodoItem = ({ id, value, isChecked, updateTodo, deleteTodo }: TodoItemType
   const [inpValue, setInpValue] = useState(value);
   const [isDeleted, setDeleted] = useState(false);
 
+  const inputRef = useRef<InputRef>(null);
+
   const updateTodoValue = async () => {
     if(!inpValue) return; 
     value !== inpValue && updateTodo(id, "value", inpValue);
@@ -36,6 +38,13 @@ const TodoItem = ({ id, value, isChecked, updateTodo, deleteTodo }: TodoItemType
     updateTodo(id, "isCompleted", !isCompleted)
     setIsCompleted(prev => !prev);
   }
+
+  useEffect(() => {
+    if (!isEdit) return
+    inputRef.current?.focus({
+      cursor: "end"
+    })
+  }, [isEdit])
 
   if(isDeleted)
     return (<></>)
@@ -48,7 +57,7 @@ const TodoItem = ({ id, value, isChecked, updateTodo, deleteTodo }: TodoItemType
             {isCompleted ? <CheckSquareOutlined /> : <BorderOutlined />}
             <span className={`ml-2 ${isCompleted ? 'text-white/50' : 'text-white'}`}>{inpValue}</span>
           </div> :
-          <Input value={inpValue} onChange={(e) => setInpValue(e.target.value)} onClick={(e) => {e.stopPropagation();}} onPressEnter={updateTodoValue} />
+          <Input ref={inputRef} value={inpValue} onChange={(e) => setInpValue(e.target.value)} onClick={(e) => {e.stopPropagation();}} onPressEnter={updateTodoValue} />
       }
       <div className='flex items-center justify-start gap-2 ml-2'>
         {
@@ -85,8 +94,10 @@ const TodoModal = ({ todoItem, isOpen, isRename, closeModal  }: TodoModalPropsTy
   const todoCntRef = useRef<HTMLDivElement | null>(null);
   const isScrollRef = useRef(false);
 
+  console.log(isLoading.todoContent)
+
   const checkLoading = () => {
-    return (isLoading.todoCreating || isLoading.todo || isLoading.todoTitle || isLoading.todoContent)
+    return (isLoading.todoCreating || isLoading.todo || isLoading.todoTitle)
   }
 
   const updateTitle = async () => {
@@ -152,7 +163,13 @@ const TodoModal = ({ todoItem, isOpen, isRename, closeModal  }: TodoModalPropsTy
   return (
     <Modal open={isOpen} bodyStyle={{ overflowY: "auto" }} className='!w-[98vw] sm:!h-[65vh] sm:!w-[75vw] lg:!w-[70vw]'  title={
       <div className='relative'>
-        <Spin spinning={isLoading.todoContent} className='!absolute bottom-[.5rem] right-[0rem]' />
+        {
+          isLoading.todoContent.length > 0 &&
+          <div className='!absolute top-[0rem] right-[1rem] text-xs'>
+            <Spin spinning={true} size='small' />
+            <span className='mx-2'>Syncing</span>
+          </div>
+        }
         <div className='text-xl  relative'>
           <div className='w-[200px] sm:w-[400px] flex items-center justify-start gap-4'>
             {

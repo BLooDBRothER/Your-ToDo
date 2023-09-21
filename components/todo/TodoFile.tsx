@@ -7,6 +7,7 @@ import { TodoModalOpenType } from '.'
 import { TodoContextType, TodoType, useTodoContext } from '@/context/TodoContext'
 import { OpenMoveModalType } from './TodoBody'
 import moment from 'moment'
+import { UserContextType, useUserContext } from '@/context/UserContext'
 
 type TodoFilePropstype = {
     todo: TodoType
@@ -19,14 +20,15 @@ const TodoFile = ({ todo, openTodoModal, openMoveModal }: TodoFilePropstype) => 
     const { modal, message } = App.useApp();
 
     const { deleteTodo } = useTodoContext() as TodoContextType;
+    const { userData } = useUserContext() as UserContextType;
+    
 
     const [isDropDownOpen, setDropDownOpen] = useState(false);
 
     const dropCntRef = useRef<HTMLDivElement>(null);
 
     const dueDateDiff = todo.duedate ? moment(todo.duedate).diff(moment(new Date()), 'days') : 10;
-
-    console.log(todo.title, ' -- ', todo.duedate);
+    const dueDate = userData.relativeTime ? moment(todo.duedate).endOf('day').fromNow() : moment(todo.duedate).format('ll')
 
     const showMessage = (isSuccess: boolean) => {
         isSuccess ? message.success(`Todo Deleted Successfully`) : message.error("Error - Please Try Again");
@@ -58,6 +60,7 @@ const TodoFile = ({ todo, openTodoModal, openMoveModal }: TodoFilePropstype) => 
     }
 
     const closeDorpDown = (e: MouseEvent) => {
+        
         if (e.target === dropCntRef.current || dropCntRef.current?.contains(e.target as Node)) return;
 
         setDropDownOpen(false);
@@ -88,7 +91,7 @@ const TodoFile = ({ todo, openTodoModal, openMoveModal }: TodoFilePropstype) => 
             width: "100%"
         }}
         ref={dropCntRef}
-        onClick={openTodoModal.bind(null, todo, true, false, false)}
+        onClick={() => {setDropDownOpen(false); openTodoModal(todo, true, false, false);}}
         onContextMenu={triggerDropdown}
         hoverable
         className='w-full !bg-primary hover:!bg-primary/80 todo-card'
@@ -102,7 +105,7 @@ const TodoFile = ({ todo, openTodoModal, openMoveModal }: TodoFilePropstype) => 
                     <ClockCircleFilled />
                     <div>
                         {/* <div>{moment(todo.duedate).format('ll')}  {moment(todo.duedate).diff(moment(new Date()), 'days')}</div> */}
-                        <div>{todo.duedate ? moment(todo.duedate).endOf('day').fromNow() : "No Due"}</div>
+                        <div>{todo.duedate ? dueDate : "No Due"}</div>
                     </div>
                 </div>
                 <div className='hover:bg-light/10 rounded-md w-[18px] h-[28px] flex items-center justify-center' 

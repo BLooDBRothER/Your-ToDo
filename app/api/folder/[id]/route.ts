@@ -21,7 +21,7 @@ export async function GET(request: NextRequest, { params }: { params: {id: strin
         if(onlyFolder)
             return NextResponse.json({"msg": "ok", folders: data.rows, todo: []})
 
-        const todoQuery = "SELECT title, id, due_date as duedate FROM public.todo WHERE created_by = $1 and folder_id = $2 ORDER BY created_at"
+        const todoQuery = "SELECT title, id, due_date as duedate FROM public.todo WHERE created_by = $1 and folder_id = $2 ORDER BY due_date, created_at"
         const todoData = await conn?.query(todoQuery, [userId, folderId]);
         
         return NextResponse.json({"msg": "ok", folders: data.rows, todo: todoData.rows})
