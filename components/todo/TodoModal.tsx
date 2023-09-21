@@ -111,10 +111,11 @@ const TodoModal = ({ todoItem, isOpen, isRename, closeModal  }: TodoModalPropsTy
   const addNewTodo = async () => {
     if(!todo.id || !todoValue || checkLoading()) return;
     
+    setTodoValue('');
+    isScrollRef.current = true;
+    
     await addTodo(todo.id, todoValue);
     
-    isScrollRef.current = true;
-    setTodoValue('');
   }
 
   const updateTodoData = async (todoContentId: string, field: "isCompleted" | "value", value: string | boolean) => {
@@ -210,7 +211,7 @@ const TodoModal = ({ todoItem, isOpen, isRename, closeModal  }: TodoModalPropsTy
             !isLoading.todoCreating && !isLoading.todo && todoContent.length === 0 && <NoData description='No Todo Added' />
           }
           {
-            todoContent.map(todo => (
+            !isLoading.todo && todoContent.map(todo => (
               <TodoItem key={todo.id} id={todo.id} value={todo.value} isChecked={todo.isCompleted} updateTodo={updateTodoData} deleteTodo={deleteTodo} />
             ))
           }

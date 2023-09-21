@@ -55,11 +55,6 @@ const Todo = ( {folderId }: {folderId: string | null}) => {
     const [nameModal, setNameModal] = useState<NameModalType>(NAME_MODEL_INITIAL_VALUE);
     const [todoModal, setTodoModal] = useState<TodoModalType>(TODO_MODEL_INITIAL_VALUE);
 
-    const [filter, setFilter] = useState<TodoBodyFilterType>({
-        visibility: "All",
-        searchQuery: '',
-    });
-
     const closeModal = (type: "folder" | "todo") => {
         type === "folder" && setNameModal(NAME_MODEL_INITIAL_VALUE)
         type === "todo" && setTodoModal(TODO_MODEL_INITIAL_VALUE)
@@ -97,8 +92,8 @@ const Todo = ( {folderId }: {folderId: string | null}) => {
             {
                 !isInvalidPage ?
                 <div className='p-2 relative'>
-                    <TodoHeader openModal={openModal} openTodoModal={openTodoModal} filter={filter} setFilter={setFilter} />
-                    <TodoBody openModal={openModal} folderId={folderId} openTodoModal={openTodoModal} filter={filter}/>
+                    <TodoHeader openModal={openModal} openTodoModal={openTodoModal} />
+                    <TodoBody openModal={openModal} folderId={folderId} openTodoModal={openTodoModal}/>
 
                     {/* name modal */}
                     {nameModal.isOpen && <NameModal closeModal={closeModal} parentFolderId={folderId}  {...nameModal} />}

@@ -135,7 +135,6 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
 
         try{
             const res = await axios.get(uri);
-            console.log(res.data)
             setData({folders: res.data.folders, todo: res.data.todo});
     
             return true

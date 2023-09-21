@@ -2,7 +2,7 @@ import { DeleteOutlined, FolderFilled, MoreOutlined } from '@ant-design/icons'
 import { App, Dropdown, Tooltip } from 'antd'
 import React, { useEffect, useRef, useState } from 'react'
 import { ModalOpenType } from '.'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { TodoContextType, useTodoContext } from '@/context/TodoContext'
 import { dropdownMenuItem } from '@/lib/contextMenuItem'
 import { OpenMoveModalType } from './TodoBody'
@@ -19,6 +19,7 @@ type FolderPropType = {
 const Folder = ({ id, name, openModal, openMoveModal }: FolderPropType) => {
     const { modal, message } = App.useApp();
     const router = useRouter();
+    const searchParams = useSearchParams()
 
     const { deleteFolder } = useTodoContext() as TodoContextType
 
@@ -51,7 +52,8 @@ const Folder = ({ id, name, openModal, openMoveModal }: FolderPropType) => {
     };
 
     const navigate = () => {
-        router.push(`/folder/${id}`)
+        const visibility = searchParams.get("visibility");
+        router.push(`/folder/${id}${visibility ? '?' + `visibility=${visibility}` : ''}`);
     }
 
     const triggerDropdown = (e: any) => {

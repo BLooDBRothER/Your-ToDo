@@ -10,20 +10,24 @@ import Link from 'next/link'
 import { BreadcrumbItemType } from 'antd/es/breadcrumb/Breadcrumb'
 import TodoFile from './TodoFile'
 import MoveModal from './MoveModal'
+import { useSearchParams } from 'next/navigation'
 
 export type OpenMoveModalType = (id: string, name: string, type: "Folder" | "Todo") => void
 
 type TodoBodyPropsType = {
-    filter: TodoBodyFilterType
     folderId: string | null
     openModal: ModalOpenType
     openTodoModal: TodoModalOpenType
 }
 
-const TodoBody = ({ filter, folderId, openModal, openTodoModal }: TodoBodyPropsType) => {
+const TodoBody = ({ folderId, openModal, openTodoModal }: TodoBodyPropsType) => {
     const { data, isLoading, parentFolders, getFolderData } = useTodoContext() as TodoContextType;
 
-    const filteredDate: TodoDataType = filter.searchQuery ? {folders: data.folders.filter(folder => (new RegExp(filter.searchQuery, 'gi').test(folder.name))), todo: data.todo.filter(todo => (new RegExp(filter.searchQuery, 'gi').test(todo.title)))} : data;
+    const searchParams = useSearchParams();
+
+    const visibility = searchParams.get("visibility") ?? "All"
+    const searchQuery = searchParams.get("search")
+    const filteredDate: TodoDataType = searchQuery ? {folders: data.folders.filter(folder => (new RegExp(searchQuery, 'gi').test(folder.name))), todo: data.todo.filter(todo => (new RegExp(searchQuery, 'gi').test(todo.title)))} : data;
 
     const [moveModalData, setMoveModalData] = useState({
         source: {
@@ -91,7 +95,7 @@ const TodoBody = ({ filter, folderId, openModal, openTodoModal }: TodoBodyPropsT
             </div>
 
             {
-                (filter.visibility === "All" || filter.visibility === "Folder") &&
+                (visibility === "All" || visibility === "Folder") &&
                 <>    
                     <div className='my-4 mx-2 text-lg flex items-center justify-start gap-4'>
                         <FolderFilled className='text-light/50' />
@@ -112,10 +116,10 @@ const TodoBody = ({ filter, folderId, openModal, openTodoModal }: TodoBodyPropsT
                 </>
             }
 
-            {filter.visibility === "All" && <Divider />}
+            {visibility === "All" && <Divider />}
 
             {
-                (filter.visibility === "All" || filter.visibility === "Todo") &&
+                (visibility === "All" || visibility === "Todo") &&
                 <>    
                     <div className='my-4 mx-2 text-lg flex items-center justify-start gap-4'>
                         <UnorderedListOutlined className='text-light/50' />
