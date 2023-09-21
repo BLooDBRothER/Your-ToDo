@@ -14,6 +14,8 @@ model User {
   profilePic     String?  @map("profile_pic")
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
+  emailRemainder Boolean @default(true) @map("email_remainder")
+  relativeTime   Boolean @default(true) @map("relative_time")
 
   folders        Folder[]
   todo           Todo[]

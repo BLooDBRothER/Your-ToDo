@@ -7,6 +7,8 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from './api/auth/[...nextauth]/route'
 import { AntdStyleProvider } from '@/context/AntdProvider'
 import TodoContextProvider from '@/context/TodoContext'
+import { Suspense } from 'react'
+import UserContextProvider from '@/context/UserContext'
 
 const nunitoSans = Nunito_Sans({ subsets: ['latin'] })
 
@@ -21,23 +23,27 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
 
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   return (
     <html lang="en">
       <body className={`bg-primary text-light ${nunitoSans.className}`}>
-        <NextAuthProvider session={session}>
-          <AntdStyleProvider>
-            <TodoContextProvider>
-              <Header />
-              <div className='px-4 py-2'>
-                <div className='bg-secondary h-[calc(100vh-80px)] w-full rounded-md border border-light overflow-auto'>
-                  {children}
-                </div>
-              </div>
-            </TodoContextProvider>
-          </AntdStyleProvider>
-        </NextAuthProvider>
+        <Suspense fallback="Initiating DB">
+          <NextAuthProvider session={session}>
+            <AntdStyleProvider>
+              <UserContextProvider>
+                <TodoContextProvider>
+                  <Header />
+                  <div className='px-4 py-2'>
+                    <div className='bg-secondary h-[calc(100vh-80px)] w-full rounded-md border border-light overflow-auto'>
+                      {children}
+                    </div>
+                  </div>
+                </TodoContextProvider>
+              </UserContextProvider>
+            </AntdStyleProvider>
+          </NextAuthProvider>
+        </Suspense>
       </body>
     </html>
   )

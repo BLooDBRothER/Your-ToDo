@@ -6,7 +6,7 @@ import UserDdropdown from './user-dropdown'
 
 const Header = () => {
   return (
-        <header className='px-4 pt-4 flex items-center justify-between'>
+        <header className='px-5 pt-4 flex items-center justify-between'>
             <div>
                 <Image
                     src="/logo/logo-only-text.png"
