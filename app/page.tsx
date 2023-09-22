@@ -1,20 +1,56 @@
 'use client';
 
-import React from 'react';
-import { Button, Divider } from 'antd';
+import React, { useEffect } from 'react';
+import { Button, Divider, notification } from 'antd';
 import Image from 'next/image';
 import { GoogleOutlined } from '@ant-design/icons';
 import { signIn, useSession } from 'next-auth/react';
 import Todo from '@/components/todo/';
+// import { checkStatus } from '@/lib/checkStatus';
+// import { sleep } from '@/lib/utils';
+// import { useRouter } from 'next/navigation';
+// import axios from 'axios';
 
 const Home = () => {
 
   const { status } = useSession();
+  // const router = useRouter();
+  // const [api, contextHolder] = notification.useNotification();
   
   const isAuthorized = status === "authenticated" ? true : false;
 
+  // const checkStatusRes = async (isRetry = false) => {
+  //   console.log("inside");
+  //   const res = await axios.post('/api/status');
+  //   const { status } = res.data;
+  //   console.log(status, isRetry)
+  //   if(!isRetry && !status)
+  //     api.info({
+  //       message: "App Status",
+  //       description: "Please Wait... Starting the App",
+  //       placement: "bottomRight",
+  //       duration: null
+  //     })    
+
+  //   if(!status){
+  //     await sleep(1000);
+  //     checkStatusRes(true);
+  //     return;
+  //   }
+
+  //   if(status && isRetry)
+  //     router.refresh();
+  //     // location.reload();
+  // }
+
+  // useEffect(() => {
+  //   checkStatusRes();
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
+
   return (
     <div className="h-full">
+      {/* {contextHolder} */}
       {
         isAuthorized ?
         <Todo folderId={null} />:
