@@ -12,8 +12,9 @@ export const authOptions = {
     ],
     callbacks: {
         async signIn({ user }: any) {
+            console.log(user)
 
-            const dbUser = await prisma.user.findUnique({
+            const dbUser = await prisma.user.findFirst({
                 where: {
                     email: user.email as string
                 }
@@ -22,6 +23,7 @@ export const authOptions = {
             if(!dbUser){
                 await prisma.user.create({
                     data: {
+                        id: user.id,
                         email: user.email,
                         profilePic: user.image,
                         name: user.name
@@ -31,17 +33,20 @@ export const authOptions = {
 
             return true
         },
-        async session({ session, token }: any) {
+        async session({ session, token, user }: any) {
+            console.log('session - ', token, user)
             session.user.id = token.id;
             return session
         },
-        async jwt({ token }:any) {
-            const dbUser = await prisma.user.findUnique({
-                where: {
-                    email: token.email as string
-                }
-            })
-            token.id = dbUser?.id
+        async jwt({ token, user }:any) {
+            console.log('jwt', token, user)
+            // const dbUser = await prisma.user.findUnique({
+            //     where: {
+            //         email: token.email as string
+            //     }
+            // })
+            if(user)
+                token.id = user.id
           return token
         }
       }

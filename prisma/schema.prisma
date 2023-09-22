@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id             String   @id @default(cuid())
   email          String   @unique
   name           String
   profilePic     String?  @map("profile_pic")
@@ -31,7 +31,7 @@ model Folder {
   parentFolder   Folder?   @relation("parentFolder", fields: [parentFolderId], references: [id], onDelete: Cascade)
   folder         Folder[]  @relation("parentFolder")
   user           User?     @relation(fields: [createdBy], references: [id])
-  createdBy      String    @db.Uuid @map("created_by")
+  createdBy      String    @map("created_by")
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
 
@@ -47,7 +47,7 @@ model Todo {
   folder         Folder?    @relation(fields: [folderId], references: [id], onDelete: Cascade) 
   user           User?      @relation(fields: [createdBy], references: [id])
   dueDate        DateTime?  @map("due_date")
-  createdBy      String     @db.Uuid @map("created_by")
+  createdBy      String     @map("created_by")
   createdAt      DateTime   @default(now()) @map("created_at")
   updatedAt      DateTime   @updatedAt @map("updated_at")
 
@@ -64,7 +64,7 @@ model TodoContent {
   todoId         String    @map("todo_id") @db.Uuid
   todo           Todo      @relation(fields: [todoId], references: [id], onDelete: Cascade)
   user           User?     @relation(fields: [createdBy], references: [id])
-  createdBy      String    @db.Uuid @map("created_by")
+  createdBy      String    @map("created_by")
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
 
