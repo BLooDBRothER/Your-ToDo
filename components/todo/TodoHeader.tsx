@@ -1,18 +1,18 @@
 import { FolderAddOutlined, PlusOutlined, UnorderedListOutlined } from '@ant-design/icons'
 import { Button, Dropdown, Input, MenuProps, Segmented } from 'antd'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { ModalOpenType, TodoBodyFilterType, TodoModalOpenType} from '.'
+import { ModalOpenType } from '.'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import useDebounce from '@/app/hooks/useDebounce'
 
 type TodoHeaderPropsType = {
     openModal: ModalOpenType
-    openTodoModal: TodoModalOpenType
+    createNewTodo: () => void
 }
 
 const filterOptions = ["All", "Folder", "Todo"];
 
-const TodoHeader = ({ openModal, openTodoModal }: TodoHeaderPropsType) => {
+const TodoHeader = ({ openModal, createNewTodo }: TodoHeaderPropsType) => {
 
     const searchParams = useSearchParams();
     const pathName = usePathname();
@@ -48,9 +48,6 @@ const TodoHeader = ({ openModal, openTodoModal }: TodoHeaderPropsType) => {
             params.set(name, value)
           else
             params.delete(name)
-
-        //   name === "visibility" && value !== "All" ? params.set(name, value) : params.delete(name);
-        //   name === "search" && value ? params.set(name, value) : params.delete(name);
      
           return params.toString()
         },
@@ -58,7 +55,7 @@ const TodoHeader = ({ openModal, openTodoModal }: TodoHeaderPropsType) => {
       )
 
     const handleDropdownMenuClick = ({ key }: { key: string }) => {
-        key === "folder" ? openModal("create") : openTodoModal(null, true, true, false);
+        key === "folder" ? openModal("create") : createNewTodo();
     }
 
     const updateFilter = (field: string, value: string) => {

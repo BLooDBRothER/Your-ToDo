@@ -8,6 +8,7 @@ import { TodoContextType, TodoType, useTodoContext } from '@/context/TodoContext
 import { OpenMoveModalType } from './TodoBody'
 import moment from 'moment'
 import { UserContextType, useUserContext } from '@/context/UserContext'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 type TodoFilePropstype = {
     todo: TodoType
@@ -18,6 +19,9 @@ type TodoFilePropstype = {
 
 const TodoFile = ({ todo, openTodoModal, openMoveModal }: TodoFilePropstype) => {
     const { modal, message } = App.useApp();
+    const router = useRouter();
+    const pathName = usePathname()
+    const searchParams = useSearchParams();
 
     const { deleteTodo } = useTodoContext() as TodoContextType;
     const { userData } = useUserContext() as UserContextType;
@@ -60,16 +64,23 @@ const TodoFile = ({ todo, openTodoModal, openMoveModal }: TodoFilePropstype) => 
     }
 
     const closeDorpDown = (e: MouseEvent) => {
-        
         if (e.target === dropCntRef.current || dropCntRef.current?.contains(e.target as Node)) return;
-
         setDropDownOpen(false);
     }
 
     const handleDropdownMenuClick = ({ key }: { key: string }) => {
-        key === "rename" && openTodoModal(todo, true, false, true);
-        key === "move" && openMoveModal(todo.id, todo.title, "Todo")
-        key === "delete" && showDeleteConfirm();
+        if(key === "rename")
+            openTodo('', true);
+        else if(key === "move")
+            openMoveModal(todo.id, todo.title, "Todo")
+        else if (key === "delete")
+            showDeleteConfirm();
+    }
+
+    const openTodo = (_: any, renameTodo = false) => {
+        setDropDownOpen(false); 
+        const visibility = searchParams.get("visibility");
+        router.push(`${pathName}?todo_id=${todo.id}${renameTodo ? `&rename_todo=true` : ''}${visibility ? `&visibility=${visibility}` : ''}`);
     }
 
     useEffect(() => {
@@ -91,7 +102,7 @@ const TodoFile = ({ todo, openTodoModal, openMoveModal }: TodoFilePropstype) => 
             width: "100%"
         }}
         ref={dropCntRef}
-        onClick={() => {setDropDownOpen(false); openTodoModal(todo, true, false, false);}}
+        onClick={openTodo}
         onContextMenu={triggerDropdown}
         hoverable
         className='w-full !bg-primary hover:!bg-primary/80 todo-card'

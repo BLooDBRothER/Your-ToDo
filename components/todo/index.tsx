@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import TodoHeader from './TodoHeader'
 import TodoBody from './TodoBody'
 import NameModal from './NameModal'
@@ -6,9 +6,10 @@ import { TodoContextType, TodoType, useTodoContext } from '@/context/TodoContext
 import PageNotFound from './404'
 import TodoModal from './TodoModal'
 import { App } from 'antd'
+import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 
 export type ModalOpenType = (type: "create" | "rename", id?: string | null, name?: string) => void
-export type TodoModalOpenType = (todo: TodoType | null, isOpen:boolean, isCreate: boolean, isRename: boolean) => void
+export type TodoModalOpenType = (todoId: string, isRename: boolean) => void
 
 export type NameModalType = {
     id: string | null
@@ -18,7 +19,7 @@ export type NameModalType = {
 }
 
 export type TodoModalType = {
-    todoItem: TodoType
+    todoId: string
     isOpen: boolean
     isRename: boolean
 }
@@ -34,14 +35,8 @@ const NAME_MODEL_INITIAL_VALUE: NameModalType = {
     type: "create",
 }
 
-const TODO_INITIAL_VALUE: TodoType = {
-    id: '',
-    title: 'Untitled',
-    todoContent: []
-}
-
 const TODO_MODEL_INITIAL_VALUE: TodoModalType = {
-    todoItem: TODO_INITIAL_VALUE,
+    todoId: '',
     isOpen: false,
     isRename: false,
 }
@@ -50,14 +45,25 @@ const TODO_MODEL_INITIAL_VALUE: TodoModalType = {
 const Todo = ( {folderId }: {folderId: string | null}) => {
     const { message } = App.useApp();
 
-    const { isInvalidPage, createTodo } = useTodoContext() as TodoContextType
+    const pathName = usePathname()
+    const searchParams = useSearchParams();
+    const router = useRouter()
+
+    const visibility = searchParams.get("visibility");
+
+
+    const { isInvalidPage, createTodo, isLoading } = useTodoContext() as TodoContextType
 
     const [nameModal, setNameModal] = useState<NameModalType>(NAME_MODEL_INITIAL_VALUE);
     const [todoModal, setTodoModal] = useState<TodoModalType>(TODO_MODEL_INITIAL_VALUE);
 
     const closeModal = (type: "folder" | "todo") => {
-        type === "folder" && setNameModal(NAME_MODEL_INITIAL_VALUE)
-        type === "todo" && setTodoModal(TODO_MODEL_INITIAL_VALUE)
+        if(type === "folder")
+         setNameModal(NAME_MODEL_INITIAL_VALUE)
+        if(type === "todo"){
+            router.push(`${pathName}${visibility ? `?visibility=${visibility}` : ''}`);
+            setTodoModal(TODO_MODEL_INITIAL_VALUE)
+        }
     }
 
     const openModal: ModalOpenType = (type, id = null, name = '') => {
@@ -65,34 +71,49 @@ const Todo = ( {folderId }: {folderId: string | null}) => {
     }
 
     const createNewTodo = useCallback(async () => {
+
+        message.open({
+            type: 'loading',
+            content: 'Creating Todo...',
+            duration: 0,
+        });
+
         const res = await createTodo(folderId);
         
         if(!res){
-          closeModal("todo");
           message.error("Error creating Todo - Try Again");
           return false;
         }
 
-        setTodoModal(prev => {
-            if(!prev.isOpen && !prev.todoItem)
-                return prev
-            
-            return {...prev, todoItem: res as TodoType}
-        });
-        
-    }, [folderId, createTodo, message])
+        const todo = res as TodoType
 
-    const openTodoModal: TodoModalOpenType = (todo, isOpen, isCreate, isRename) => {
-        setTodoModal({todoItem: todo || TODO_INITIAL_VALUE, isOpen, isRename});
-        isCreate && createNewTodo()
+        message.destroy();
+        router.push(`${pathName}?todo_id=${todo.id}${visibility ? `&visibility=${visibility}` : ''}`);
+        
+    }, [folderId, createTodo, message, router, pathName, visibility]);
+
+    const openTodoModal: TodoModalOpenType = (todoId, isRename) => {
+        setTodoModal({todoId, isOpen: true, isRename});
+        // isCreate && createNewTodo()
     }
+
+    useEffect(() => {
+        if(isLoading.folder) return;
+        const todoId = searchParams.get("todo_id");
+
+        if(!todoId) return;
+
+        const isRename = searchParams.get("rename_todo") === "true" ? true : false;
+
+        openTodoModal(todoId, isRename)
+    }, [searchParams, isLoading.folder])
 
     return (
         <>
             {
                 !isInvalidPage ?
                 <div className='p-2 relative'>
-                    <TodoHeader openModal={openModal} openTodoModal={openTodoModal} />
+                    <TodoHeader openModal={openModal} createNewTodo={createNewTodo} />
                     <TodoBody openModal={openModal} folderId={folderId} openTodoModal={openTodoModal}/>
 
                     {/* name modal */}

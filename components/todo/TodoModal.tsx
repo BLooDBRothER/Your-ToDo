@@ -77,11 +77,11 @@ const TodoItem = ({ id, value, isChecked, updateTodo, deleteTodo }: TodoItemType
 
 const FILTER_OPTIONS = ["All", "Finished", "Pending"]
 
-const TodoModal = ({ todoItem, isOpen, isRename, closeModal  }: TodoModalPropsType) => {
+const TodoModal = ({ todoId, isOpen, isRename, closeModal  }: TodoModalPropsType) => {
 
   const { data, isLoading, getTodoData, addTodo, updateTodo, updateTodoContent, deleteTodoContent } = useTodoContext() as TodoContextType
 
-  const todo: TodoType = data.todo.find(each => each.id === todoItem.id) || todoItem; 
+  const todo = data.todo.find(each => each.id === todoId) as TodoType;
   
   const [todoTitle, setTitle] = useState(todo.title);
   const [todoValue, setTodoValue] = useState('');
