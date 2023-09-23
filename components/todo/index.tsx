@@ -52,7 +52,7 @@ const Todo = ( {folderId }: {folderId: string | null}) => {
     const visibility = searchParams.get("visibility");
 
 
-    const { isInvalidPage, createTodo, isLoading } = useTodoContext() as TodoContextType
+    const { data, isInvalidPage, createTodo, isLoading } = useTodoContext() as TodoContextType
 
     const [nameModal, setNameModal] = useState<NameModalType>(NAME_MODEL_INITIAL_VALUE);
     const [todoModal, setTodoModal] = useState<TodoModalType>(TODO_MODEL_INITIAL_VALUE);
@@ -94,7 +94,6 @@ const Todo = ( {folderId }: {folderId: string | null}) => {
 
     const openTodoModal: TodoModalOpenType = (todoId, isRename) => {
         setTodoModal({todoId, isOpen: true, isRename});
-        // isCreate && createNewTodo()
     }
 
     useEffect(() => {
@@ -105,14 +104,21 @@ const Todo = ( {folderId }: {folderId: string | null}) => {
 
         const isRename = searchParams.get("rename_todo") === "true" ? true : false;
 
-        openTodoModal(todoId, isRename)
+        if(!data.todo.find(todo => todo.id === todoId)){
+            message.error("Invalid Todo ID")
+            return;
+        }
+        
+        openTodoModal(todoId, isRename);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams, isLoading.folder])
 
     return (
         <>
             {
                 !isInvalidPage ?
-                <div className='p-2 relative'>
+                <div className='p-2 relative h-full'>
                     <TodoHeader openModal={openModal} createNewTodo={createNewTodo} />
                     <TodoBody openModal={openModal} folderId={folderId} openTodoModal={openTodoModal}/>
 

@@ -1,13 +1,11 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Divider, notification } from 'antd';
 import Image from 'next/image';
 import { GoogleOutlined } from '@ant-design/icons';
 import { signIn, useSession } from 'next-auth/react';
 import Todo from '@/components/todo/';
-// import { checkStatus } from '@/lib/checkStatus';
-// import { sleep } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
@@ -17,21 +15,18 @@ const Home = () => {
   const router = useRouter();
   const [api, contextHolder] = notification.useNotification();
   
+  const [isDBStarting, setDBStarting] = useState(true);
+
   const isAuthorized = status === "authenticated" ? true : false;
 
   const hold = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
   const checkStatusRes = async (isRetry = false) => {
+
     const res = await axios.post('/api/status');
     const { status } = res.data;
     console.log(status, isRetry)
-    if(!isRetry && !status)
-      api.info({
-        message: "App Status",
-        description: "Please Wait... Starting the App",
-        placement: "bottomRight",
-        duration: null
-      })    
+
 
     if(!status){
       await hold(1000);
@@ -41,9 +36,21 @@ const Home = () => {
 
     if(status && isRetry)
       location.reload();
+      // router.refresh();
+    
+    if(status){
+      setDBStarting(false);
+      api.destroy();
+    }
   }
 
   useEffect(() => {
+    api.info({
+      message: "App Is Starting",
+      description: "Please Wait... Your-Todo is Waking Up!!!",
+      placement: "bottomRight",
+      duration: null
+    })
     checkStatusRes();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
