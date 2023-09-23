@@ -1,8 +1,8 @@
-import { BorderOutlined, CheckOutlined, CheckSquareOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, DatePicker, DatePickerProps, Divider, Input, InputRef, Modal, Segmented, Space, Spin } from 'antd'
+import { BorderOutlined, CheckOutlined, CheckSquareFilled, CheckSquareOutlined, CopyFilled, CopyOutlined, DeleteOutlined, EditFilled, EditOutlined, PlusOutlined, ReconciliationFilled, ReconciliationOutlined } from '@ant-design/icons'
+import { App, Button, DatePicker, DatePickerProps, Divider, Input, InputRef, Modal, Segmented, Space, Spin } from 'antd'
 import React, { useEffect, useRef, useState } from 'react'
 import { TodoModalType } from '.'
-import { TodoContextType, TodoType, useTodoContext } from '@/context/TodoContext'
+import { TodoContentType, TodoContextType, TodoType, useTodoContext } from '@/context/TodoContext'
 import NoData from '../NoData'
 import TodoLoading from './TodoLoading'
 import dayjs from 'dayjs'
@@ -12,15 +12,17 @@ type TodoModalPropsType = TodoModalType & {
   closeModal: (type: "folder" | "todo") => void
 }
 
+
 type TodoItemTypeProps = {
   id: string
   value: string
   isChecked: boolean
+  copyTodo: (todoContent: TodoContentType[]) => void
   updateTodo: (todoContentId: string, field: "isCompleted" | "value", value: string | boolean) => void
   deleteTodo: (todoContentId: string) => void
 }
 
-const TodoItem = ({ id, value, isChecked, updateTodo, deleteTodo }: TodoItemTypeProps) => {
+const TodoItem = ({ id, value, isChecked, copyTodo, updateTodo, deleteTodo }: TodoItemTypeProps) => {
   const [isEdit, setEdit] = useState(false);
   const [isCompleted, setIsCompleted] = useState(isChecked);
   const [inpValue, setInpValue] = useState(value);
@@ -57,14 +59,19 @@ const TodoItem = ({ id, value, isChecked, updateTodo, deleteTodo }: TodoItemType
             {isCompleted ? <CheckSquareOutlined /> : <BorderOutlined />}
             <span className={`ml-2 ${isCompleted ? 'text-white/50' : 'text-white'}`}>{inpValue}</span>
           </div> :
-          <Input ref={inputRef} value={inpValue} onChange={(e) => setInpValue(e.target.value)} onClick={(e) => {e.stopPropagation();}} onPressEnter={updateTodoValue} />
+          <Input ref={inputRef} maxLength={150} showCount value={inpValue} onChange={(e) => setInpValue(e.target.value)} onClick={(e) => {e.stopPropagation();}} onPressEnter={updateTodoValue} />
       }
       <div className='flex items-center justify-start gap-2 ml-2'>
         {
           isEdit ?
             <Button icon={<CheckOutlined />} onClick={(e) => { e.stopPropagation(); updateTodoValue() }} /> :
-            <Button icon={<EditOutlined />} onClick={(e) => { e.stopPropagation(); setEdit(true) }} />
+            <Button icon={<EditFilled />} onClick={(e) => { e.stopPropagation(); setEdit(true) }} />
         }
+        <Button icon={<CopyFilled />} onClick={(e) => { 
+          e.stopPropagation();
+          copyTodo([{id, value: inpValue, isCompleted}])
+         }} />
+         
         <Button type='primary' danger icon={<DeleteOutlined />} onClick={(e) => { 
           e.stopPropagation();
           deleteTodo(id);
@@ -78,8 +85,9 @@ const TodoItem = ({ id, value, isChecked, updateTodo, deleteTodo }: TodoItemType
 const FILTER_OPTIONS = ["All", "Finished", "Pending"]
 
 const TodoModal = ({ todoId, isOpen, isRename, closeModal  }: TodoModalPropsType) => {
+  const { message } = App.useApp();
 
-  const { data, isLoading, getTodoData, addTodo, updateTodo, updateTodoContent, deleteTodoContent } = useTodoContext() as TodoContextType
+  const { data, isLoading, getTodoData, addTodo, addMultipleTodo, updateTodo, updateTodoContent, deleteTodoContent } = useTodoContext() as TodoContextType
 
   const todo = data.todo.find(each => each.id === todoId) as TodoType;
   
@@ -93,8 +101,6 @@ const TodoModal = ({ todoId, isOpen, isRename, closeModal  }: TodoModalPropsType
   const inputRef = useRef<InputRef>(null);
   const todoCntRef = useRef<HTMLDivElement | null>(null);
   const isScrollRef = useRef(false);
-
-  console.log(isLoading.todoContent)
 
   const checkLoading = () => {
     return (isLoading.todoCreating || isLoading.todo || isLoading.todoTitle)
@@ -135,9 +141,40 @@ const TodoModal = ({ todoId, isOpen, isRename, closeModal  }: TodoModalPropsType
     await updateTodo(todo.id, "dueDate", timeStamp);
   }
 
-  // useEffect(() => {
-  //   todo.id && setTodo(data.todo.find(each => each.id === todo.id) as TodoType)
-  // }, [data.todo, todo.id])
+  const copyTodo = async (todoContent: TodoContentType[]) => {
+    await navigator.clipboard.writeText(JSON.stringify(
+      {
+        id: todo.id,
+        todoContent:  todoContent.map(todo => ({value: todo.value, isCompleted: todo.isCompleted}))
+      }
+    )) 
+    message.success("Todo Copied");
+  }
+
+  const pasteTodo = async () => {
+    const data = await navigator.clipboard.readText();
+    if(!data) return;
+    try{
+      const copiedTodo = JSON.parse(data)
+      
+      if(!(copiedTodo.id && Array.isArray(copiedTodo.todoContent))) throw Error();
+
+      if(copiedTodo.id === todo.id){
+        message.error("Cannot Paste on same Todo");
+        return;
+      }
+
+      addMultipleTodo(todo.id, copiedTodo.todoContent)
+      
+    }
+    catch{
+      if(data.length > 1000) return;
+      addTodo(todo.id, data);
+    }
+    finally{
+      await navigator.clipboard.writeText("");
+    }
+  }
 
   useEffect(() => {
     if (!isEdit) return
@@ -155,9 +192,8 @@ const TodoModal = ({ todoId, isOpen, isRename, closeModal  }: TodoModalPropsType
   }, [todoContent.length])
 
   useEffect(() => {
-    todo.id && getTodoData(todo.id);
+    getTodoData(todo.id);
     todoCntRef.current = document.querySelector(".ant-modal-body");
-    console.log(todoCntRef.current)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -176,7 +212,7 @@ const TodoModal = ({ todoId, isOpen, isRename, closeModal  }: TodoModalPropsType
             {
               isEdit ?
                 <>
-                  <Input ref={inputRef} placeholder='TODO Title' value={todoTitle} onPressEnter={updateTitle} onChange={(e) => { setTitle(e.target.value) }} /> 
+                  <Input ref={inputRef} maxLength={150} showCount placeholder='TODO Title' value={todoTitle} onPressEnter={updateTitle} onChange={(e) => { setTitle(e.target.value) }} /> 
                   <Button icon={<CheckOutlined />} loading={isLoading.todoTitle} onClick={updateTitle} />
                 </>:
                 <>
@@ -186,18 +222,22 @@ const TodoModal = ({ todoId, isOpen, isRename, closeModal  }: TodoModalPropsType
             }
           </div>
         </div>
-        <div className=' rounded-lg flex items-center justify-center mt-2'>
-          <Space.Compact className='!w-full sm:!w-[75%] bg-primary p-4 rounded-lg'>
-            <Input placeholder='Enter Your TODO' value={todoValue} onPressEnter={addNewTodo} onChange={(e) => {setTodoValue(e.target.value)}} />
+        <div className=' rounded-lg flex flex-col md:flex-row items-center justify-center gap-2 mt-2'>
+          <Space.Compact className='!w-full sm:!flex-1 bg-primary p-4 rounded-lg'>
+            <Input placeholder='Enter Your TODO' maxLength={1000} showCount value={todoValue} onPressEnter={addNewTodo} onChange={(e) => {setTodoValue(e.target.value)}} />
             <Button type="primary" icon={<PlusOutlined />} onClick={addNewTodo} >Add</Button>
           </Space.Compact>
+          <div className='flex md:flex-col justify-between items-center gap-2 w-full md:w-[unset]'>
+            <DatePicker placeholder='Due Date'  onChange={handleDateChange} {...(todo.duedate && {defaultValue: dayjs(todo.duedate)})} disabledDate={(current) => {
+              return current.diff(new Date(), 'days') < 0
+            }} />
+            <Segmented options={FILTER_OPTIONS} className='!bg-primary' value={filter} onChange={(filterValue) => { setFilter(filterValue as string)}} />
+          </div>
         </div>
         <Divider className='!my-2' />
-        <div className='flex justify-between items-center'>
-          <Segmented options={FILTER_OPTIONS} className='!bg-primary' value={filter} onChange={(filterValue) => { setFilter(filterValue as string)}} />
-          <DatePicker placeholder='Due Date'  onChange={handleDateChange} {...(todo.duedate && {defaultValue: dayjs(todo.duedate)})} disabledDate={(current) => {
-            return current.diff(new Date(), 'days') < 0
-          }} />
+        <div className='flex items-center justify-start'>
+          <Button icon={<CopyFilled />} onClick={copyTodo.bind(null, todoContent)}>Copy All</Button>
+          <Button icon={<ReconciliationFilled />} onClick={pasteTodo} >Paste</Button>
         </div>
       </div>
     }
@@ -212,7 +252,7 @@ const TodoModal = ({ todoId, isOpen, isRename, closeModal  }: TodoModalPropsType
           }
           {
             !isLoading.todo && todoContent.map(todo => (
-              <TodoItem key={todo.id} id={todo.id} value={todo.value} isChecked={todo.isCompleted} updateTodo={updateTodoData} deleteTodo={deleteTodo} />
+              <TodoItem key={todo.id} id={todo.id} value={todo.value} isChecked={todo.isCompleted} copyTodo={copyTodo} updateTodo={updateTodoData} deleteTodo={deleteTodo} />
             ))
           }
         </div>

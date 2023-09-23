@@ -32,6 +32,7 @@ const TodoLoading = ({ type }: { type: "folder" | "todo" | "todoContent" }) => {
                 <div className='flex items-center justify-start ml-4'>
                   <Skeleton paragraph={false} title={false} avatar={{ shape: "square", size: "small" }} active />
                   <Skeleton paragraph={false} title={false} avatar={{ shape: "square", size: "small" }} active />
+                  <Skeleton paragraph={false} title={false} avatar={{ shape: "square", size: "small" }} active />
                 </div>
               </div>
             }

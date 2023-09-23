@@ -1,6 +1,6 @@
 import { dropdownMenuItem } from '@/lib/contextMenuItem'
 import { ClockCircleFilled, DeleteOutlined, MoreOutlined, UnorderedListOutlined } from '@ant-design/icons'
-import { App, Card, Divider, Dropdown } from 'antd'
+import { App, Card, Divider, Dropdown, Tooltip } from 'antd'
 import Image from 'next/image'
 import React, { useEffect, useRef, useState } from 'react'
 import { TodoModalOpenType } from '.'
@@ -107,15 +107,16 @@ const TodoFile = ({ todo, openTodoModal, openMoveModal }: TodoFilePropstype) => 
         hoverable
         className='w-full !bg-primary hover:!bg-primary/80 todo-card'
         >
-            <div className='flex items-center justify-start gap-2 px-2 flex-1'>
-                <h1 className='flex-1 text-lg'>{todo.title}</h1>
-            </div>
+            <Tooltip title={todo.title} placement='top' mouseEnterDelay={0.5}>
+                <div className='flex items-center justify-start gap-2 px-2 flex-1'>
+                    <h1 className='flex-1 text-lg whitespace-nowrap overflow-hidden text-ellipsis'>{todo.title}</h1>
+                </div>
+            </Tooltip>
             <Divider className='!my-2' />
             <div className='flex items-center justify-start gap-2 px-2'>
                 <div className={`flex gap-2 items-center flex-1 ${dueDateDiff <= 3 ? '!text-red-500' : (dueDateDiff <=7 ? 'text-orange-300' : '')}`}>
                     <ClockCircleFilled />
                     <div>
-                        {/* <div>{moment(todo.duedate).format('ll')}  {moment(todo.duedate).diff(moment(new Date()), 'days')}</div> */}
                         <div>{todo.duedate ? dueDate : "No Due"}</div>
                     </div>
                 </div>

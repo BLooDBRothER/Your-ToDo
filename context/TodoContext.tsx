@@ -17,6 +17,7 @@ export type TodoContextType = {
     getTodoData: (todoId: string) => Promise<boolean>
     deleteTodo: (todoId: string) => Promise<boolean>
     addTodo: (todoId: string, value: string) => Promise<boolean>
+    addMultipleTodo: (todoId: string, data: {value: string, isCompleted: boolean}[]) => Promise<boolean>
     updateTodo: (todoId: string, field: 'title' | 'dueDate', value: string | Date | null) => Promise<boolean>
     updateTodoContent: (todoId: string, todoContentId: string, field: "isCompleted" | "value", value: string | boolean) => Promise<boolean>
     deleteTodoContent: (todoId: string, todoContentId: string) => Promise<boolean>
@@ -37,7 +38,7 @@ export type FolderType = {
     name: string
 }
 
-type TodoContentType = {
+export type TodoContentType = {
     id: string
     value: string
     isCompleted: boolean
@@ -288,7 +289,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
         }
     }
 
-    const addTodo: TodoContextType["addTodo"] = async (todoId, value) => {
+    const addTodo: TodoContextType["addTodo"] = async (todoId, value, isCompleted = false) => {
         try{
             const randomUUIDStr = crypto.randomUUID();
             setData(prev => {
@@ -299,7 +300,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
                             {
                                 id: randomUUIDStr,
                                 value,
-                                isCompleted: false,
+                                isCompleted,
                                 notSynced: true
                             }
                         )
@@ -313,7 +314,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
                 prev.todoContent.push(0);
                 return prev;
             });
-            const res = await axios.post(`/api/todo/${todoId}`, {value});
+            const res = await axios.post(`/api/todo/${todoId}`, {value, isMultiple: false});
             setData(prev => {
                 const prevCpy = [...prev.todo];
                 
@@ -326,6 +327,38 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
                             }
                             return todoContent;
                         })
+                    }
+                    return todo;
+                })
+    
+                return {...prev, todo: updatedTodo}
+            });
+            return true;
+        }
+        catch (err: unknown){
+            return false;
+        }
+        finally{
+            setIsLoading(prev => {
+                prev.todoContent.pop();
+                return prev;
+            });
+        }
+    }
+
+    const addMultipleTodo: TodoContextType["addMultipleTodo"] = async (todoId, data) => {
+        try{
+            setIsLoading(prev => {
+                prev.todoContent.push(0);
+                return prev;
+            });
+            const res = await axios.post(`/api/todo/${todoId}`, {todos: data, isMultiple: true});
+            setData(prev => {
+                const prevCpy = [...prev.todo];
+                
+                const updatedTodo = prevCpy.map(todo => {
+                    if(todo.id === todoId){
+                        todo.todoContent = [...todo.todoContent, ...res.data.todo];
                     }
                     return todo;
                 })
@@ -488,7 +521,7 @@ const TodoContextProvider = ({ children }: { children: ReactNode}) => {
     }
 
     return (
-        <todoContext.Provider value={{data, parentFolders, isLoading, isInvalidPage, createFolder, getFolderData, getOnlyFolder, updateFolder, deleteFolder, createTodo, getTodoData, deleteTodo, addTodo, updateTodo, updateTodoContent, deleteTodoContent, moveData}} >
+        <todoContext.Provider value={{data, parentFolders, isLoading, isInvalidPage, createFolder, getFolderData, getOnlyFolder, updateFolder, deleteFolder, createTodo, getTodoData, deleteTodo, addTodo, addMultipleTodo, updateTodo, updateTodoContent, deleteTodoContent, moveData}} >
             {children}
         </todoContext.Provider>
     )

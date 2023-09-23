@@ -56,7 +56,7 @@ const NameModal = ({ type, isOpen, name, id, parentFolderId, closeModal }: NameM
 
   return (
     <Modal title={`${type === "create" ? "New" : "Update"} Folder`} open={isOpen} confirmLoading={isLoading.folderEdit} okText={`${type === "create" ? "Create" : "Rename"}`} onOk={type === "create" ? createNewFolder : updateCurrentFolder} onCancel={closeModal.bind(null, "folder")}>
-      <Input placeholder='Enter Folder Name' value={folderName} status={`${error ? 'error' : ''}`} onChange={(e) => {
+      <Input placeholder='Enter Folder Name' maxLength={150} showCount value={folderName} status={`${error ? 'error' : ''}`} onChange={(e) => {
         setError('');
         setFolderName(e.target.value)
       }} onPressEnter={type === "create" ? createNewFolder : updateCurrentFolder} ref={inputRef} />
