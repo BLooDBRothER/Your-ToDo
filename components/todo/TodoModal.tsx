@@ -137,7 +137,7 @@ const TodoModal = ({ todoId, isOpen, isRename, closeModal  }: TodoModalPropsType
   }
 
   const handleDateChange: DatePickerProps["onChange"] = async (date, dateString) => {
-    const timeStamp = date ? new Date(dateString) : null;
+    const timeStamp = date ? new Date(dateString).toISOString(): null;
     await updateTodo(todo.id, "dueDate", timeStamp);
   }
 

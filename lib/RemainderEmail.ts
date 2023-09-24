@@ -47,18 +47,17 @@ export const RemainderEmail = (tomorrow: Date) => {
             
             todoList?.push({
                 name: row.title,
-                url: `${process.env.BASE_URL}${row.folder_id ? `/folder/${row.folder_id}` : ''}`
+                url: `${process.env.BASE_URL}${row.folder_id ? `/folder/${row.folder_id}` : ''}?todo_id=${row.todo_id}`
             });
         }
         console.log(userData)
     }
 
-    const handleMailStatus = async (mailRes: Promise<ClientResponse>, mail: string, count: number) => {
-        const res = await mailRes;
+    const handleMailStatus = async (mailRes: ClientResponse, mail: string, count: number) => {
+        console.log("mail status", mailRes);
 
-        if(res.statusCode !== 202) failedMail.push(mail);
+        if(mailRes.statusCode !== 202) failedMail.push(mail);
 
-        console.log(count, userData.size, failedMail.length, res);
         count === userData.size && failedMail.length !== 0 && retryMailSend();
     }
 
@@ -68,10 +67,10 @@ export const RemainderEmail = (tomorrow: Date) => {
         }
     }
 
-    const sendUserEmail = () => {
+    const sendUserEmail = async () => {
         let count = 1;
         for (const [email, data] of userData) {
-            const res = sendMail(email, "TODO Remainder -", data);
+            const res = await sendMail(email, "TODO Remainder -", data);
             handleMailStatus(res, email, count++)
         }
     }

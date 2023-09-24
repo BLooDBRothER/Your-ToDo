@@ -17,7 +17,6 @@ export async function POST(request: Request){
         const folderQuery = "SELECT * FROM public.folders WHERE created_by=$1 and id=$2";
         const folderData = await conn?.query(folderQuery, [userId, folderId]);
     
-        console.log(folderData)
     
         if(folderData.rowCount !== 1) return NextResponse.json({"message": "Invalid Folder"}, {status: 404});
     }

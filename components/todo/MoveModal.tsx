@@ -52,7 +52,6 @@ const formatFolderToTreeData = (folders: FolderType[], sourceKey: string): DataN
 }
 
 const updateTreeData = (list: DataNode[], key: React.Key, children: FolderType[], sourceKey: string): DataNode[] => {
-    console.log(list)
     return list.map(node => {
         return {
             ...node,

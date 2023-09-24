@@ -42,8 +42,6 @@ export async function POST(request: Request){
         }
     });
 
-    console.log(newFolder);
-
     return NextResponse.json({"message": "Created Successfully", "folderId": newFolder.id});
 
 }

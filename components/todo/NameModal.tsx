@@ -48,7 +48,6 @@ const NameModal = ({ type, isOpen, name, id, parentFolderId, closeModal }: NameM
 
   useEffect(() => {
     if (!isOpen) return
-    console.log(inputRef.current)
     inputRef.current?.focus({
       cursor: "end"
     })

@@ -29,8 +29,6 @@ export async function GET(_: Request, { params }: { params: {id: string}}) {
         }
     });
 
-    console.log(data)
-
     return NextResponse.json({"msg": "ok", todoContent: data?.todoContent ?? []})
 }
 

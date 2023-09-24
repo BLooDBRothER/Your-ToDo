@@ -24,8 +24,6 @@ export async function POST(req: NextRequest){
     const tomorrow = new Date(today.getTime() + (1 * 24 * 60 * 60 * 1000));
     const later = new Date(today.getTime() + (2 * 24 * 60 * 60 * 1000));
 
-    const t = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0,0 )
-    console.log(parseDate(today), parseDate(later))
     
     const query = "SELECT t.id todo_id, t.title, t.folder_id, u.email FROM public.todo t join public.users u on t.created_by = u.id AND u.email_remainder AND t.due_date > $1 and t.due_date < $2 ORDER BY u.id";
     
@@ -36,7 +34,7 @@ export async function POST(req: NextRequest){
     const remainderEmail = RemainderEmail(tomorrow);
 
     remainderEmail.processEmail(rows);
-    // remainderEmail.sendUserEmail();
+    await remainderEmail.sendUserEmail();
    
     return NextResponse.json({msg: data})
 }

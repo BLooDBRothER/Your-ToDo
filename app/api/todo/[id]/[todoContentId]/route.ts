@@ -24,7 +24,6 @@ export async function PATCH(request: Request, { params }: { params: {id: string,
             [field]: value
         }
     })
-    console.log(res)
 
     return NextResponse.json({"message": "Updated Successfully"});
 

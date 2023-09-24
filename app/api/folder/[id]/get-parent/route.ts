@@ -21,7 +21,6 @@ export async function GET(_: Request ,{ params }: { params: {id: string}}){
 
     try {
         const data = await conn?.query(query, [folderId, userId]);
-        console.log(data.rows)
 
         return NextResponse.json({"msg": "ok", folders: data.rows})
     }
