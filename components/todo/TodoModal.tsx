@@ -235,7 +235,7 @@ const TodoModal = ({ todoId, isOpen, isRename, closeModal  }: TodoModalPropsType
           </div>
         </div>
         <Divider className='!my-2' />
-        <div className='flex items-center justify-start'>
+        <div className='flex items-center justify-start gap-2'>
           <Button icon={<CopyFilled />} onClick={copyTodo.bind(null, todoContent)}>Copy All</Button>
           <Button icon={<ReconciliationFilled />} onClick={pasteTodo} >Paste</Button>
         </div>

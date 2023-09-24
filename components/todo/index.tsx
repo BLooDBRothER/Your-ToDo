@@ -45,9 +45,9 @@ const TODO_MODEL_INITIAL_VALUE: TodoModalType = {
 const Todo = ( {folderId }: {folderId: string | null}) => {
     const { message } = App.useApp();
 
-    const pathName = usePathname()
+    const pathName = usePathname();
     const searchParams = useSearchParams();
-    const router = useRouter()
+    const router = useRouter();
 
     const visibility = searchParams.get("visibility");
 
@@ -100,7 +100,10 @@ const Todo = ( {folderId }: {folderId: string | null}) => {
         if(isLoading.folder) return;
         const todoId = searchParams.get("todo_id");
 
-        if(!todoId) return;
+        if(!todoId){
+            closeModal("todo");
+            return;            
+        }
 
         const isRename = searchParams.get("rename_todo") === "true" ? true : false;
 
