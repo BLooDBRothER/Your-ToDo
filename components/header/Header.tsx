@@ -10,8 +10,10 @@ const Header = () => {
             <div>
                 <Image
                     src="/logo/logo-only-text.png"
+                    priority
                     width={200}
-                    height={40}
+                    height={0}
+                    className='w-[200px] h-auto'
                     alt='logo'
                 />
             </div>

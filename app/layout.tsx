@@ -15,6 +15,8 @@ const nunitoSans = Nunito_Sans({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Todo App',
   description: 'Folder Based Todo App',
+  icons: { icon: "/favicon-96x96.png", apple: "/apple-icon-180x180.png" },
+  manifest: "/manifest.json"
 }
 
 export default async function RootLayout({

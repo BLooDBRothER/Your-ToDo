@@ -96,7 +96,7 @@ const TodoFile = ({ todo, openTodoModal, openMoveModal }: TodoFilePropstype) => 
   return (
     <Dropdown menu={{ items: dropdownMenuItem, onClick: handleDropdownMenuClick }} open={isDropDownOpen} trigger={["contextMenu"]}>
         <Card
-        cover={<Image width={200} height={0} src="/assets/todo.svg" className='!w-full h-auto select-none' alt='todo image' />}
+        cover={<Image width={200} height={0} priority src="/assets/todo.svg" className='!w-full h-auto select-none' alt='todo image' />}
         size='small'
         bodyStyle={{
             width: "100%"
