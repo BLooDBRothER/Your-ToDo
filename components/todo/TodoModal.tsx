@@ -1,4 +1,4 @@
-import { BorderOutlined, CheckOutlined, CheckSquareFilled, CheckSquareOutlined, CopyFilled, CopyOutlined, DeleteOutlined, EditFilled, EditOutlined, PlusOutlined, ReconciliationFilled, ReconciliationOutlined } from '@ant-design/icons'
+import { BorderOutlined, CheckOutlined, CheckSquareOutlined, CopyFilled, DeleteOutlined, EditFilled, EditOutlined, PlusOutlined, ReconciliationFilled, ReconciliationOutlined } from '@ant-design/icons'
 import { App, Button, DatePicker, DatePickerProps, Divider, Input, InputRef, Modal, Segmented, Space, Spin } from 'antd'
 import React, { useEffect, useRef, useState } from 'react'
 import { TodoModalType } from '.'
@@ -198,7 +198,7 @@ const TodoModal = ({ todoId, isOpen, isRename, closeModal  }: TodoModalPropsType
   }, [])
 
   return (
-    <Modal open={isOpen} bodyStyle={{ overflowY: "auto" }} className='!w-[98vw] sm:!h-[65vh] sm:!w-[75vw] lg:!w-[70vw]'  title={
+    <Modal open={isOpen} bodyStyle={{ overflowY: "auto" }} className='!w-[98vw] sm:!h-[65vh]  lg:!w-[70vw]'  title={
       <div className='relative'>
         {
           isLoading.todoContent.length > 0 &&
@@ -245,7 +245,7 @@ const TodoModal = ({ todoId, isOpen, isRename, closeModal  }: TodoModalPropsType
       onCancel={closeModal.bind(null, "todo")}
     >
       <Spin spinning={isLoading.todoCreating} tip="Creating Todo">
-        <div className='bg-secondary h-[65vh] p-4 rounded-lg'>
+        <div className='bg-secondary min-h-[50vh] max-h-[60vh] p-4 rounded-lg'>
           {isLoading.todo && <TodoLoading type='todoContent' />}
           {
             !isLoading.todoCreating && !isLoading.todo && todoContent.length === 0 && <NoData description='No Todo Added' />

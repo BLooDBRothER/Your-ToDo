@@ -35,7 +35,7 @@ export default async function RootLayout({
                 <TodoContextProvider>
                   <Header />
                   <div className='px-4 py-2'>
-                    <div className='bg-secondary h-[calc(100vh-80px)] w-full rounded-md border border-light overflow-auto'>
+                    <div className='bg-secondary min-h-[calc(100vh-80px)] w-full rounded-md border border-light'>
                       {children}
                     </div>
                   </div>
