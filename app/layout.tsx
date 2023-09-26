@@ -15,8 +15,7 @@ const nunitoSans = Nunito_Sans({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Todo App',
   description: 'Folder Based Todo App',
-  icons: { icon: "/favicon-96x96.png", apple: "/apple-icon-180x180.png" },
-  manifest: "/manifest.json"
+  icons: [{ rel: "icon", url: "android-icon-192x192/icon.png" }, { rel: "apple-touch-icon", url: "apple-icon-180x180.png" }]
 }
 
 export default async function RootLayout({
@@ -38,7 +37,9 @@ export default async function RootLayout({
                   <Header />
                   <div className='px-4 py-2'>
                     <div className='bg-secondary min-h-[calc(100vh-80px)] w-full rounded-md border border-light'>
-                      {children}
+                      <Suspense fallback="Loading">
+                        {children}
+                      </Suspense>
                     </div>
                   </div>
                 </TodoContextProvider>
