@@ -15,7 +15,15 @@ const nunitoSans = Nunito_Sans({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Todo App',
   description: 'Folder Based Todo App',
-  icons: [{ rel: "icon", url: "android-icon-192x192/icon.png" }, { rel: "apple-touch-icon", url: "apple-icon-180x180.png" }]
+  icons: [{ rel: "icon", url: "android-icon-192x192/icon.png" }, { rel: "apple-touch-icon", url: "apple-icon-180x180.png" }],
+  openGraph: {
+    type: "website",
+    url: "https://your-to-do.vercel.app",
+    title: "Your Todo - Folder Based Todo App",
+    siteName: "Your Todo - Folder Based Todo App",
+    description: "Your Todo is a folder based todo app where user can create folder and related todo inside the respective folder.",
+    images: [{url: "/logo/logo-only-text.png"}]
+  }
 }
 
 export default async function RootLayout({
@@ -37,9 +45,7 @@ export default async function RootLayout({
                   <Header />
                   <div className='px-4 py-2'>
                     <div className='bg-secondary min-h-[calc(100vh-80px)] w-full rounded-md border border-light'>
-                      <Suspense fallback="Loading">
-                        {children}
-                      </Suspense>
+                      {children}
                     </div>
                   </div>
                 </TodoContextProvider>
