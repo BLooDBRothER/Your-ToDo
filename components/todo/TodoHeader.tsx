@@ -59,7 +59,7 @@ const TodoHeader = ({ openModal, createNewTodo }: TodoHeaderPropsType) => {
     }
 
     const updateFilter = (field: string, value: string) => {
-        router.push(`${pathName}?${createQueryString(field, value)}`)
+        router.push(`${pathName}?${createQueryString(field, value)}`);
     }
 
     useEffect(() => {

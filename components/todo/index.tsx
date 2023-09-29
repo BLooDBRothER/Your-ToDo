@@ -81,7 +81,7 @@ const Todo = ( {folderId }: {folderId: string | null}) => {
         const todoId = searchParams.get("todo_id");
 
         if(!todoId){
-            closeModal("todo");
+            todoModal.isOpen && closeModal("todo");
             return;            
         }
 
