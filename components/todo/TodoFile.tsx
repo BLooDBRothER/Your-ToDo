@@ -3,12 +3,11 @@ import { ClockCircleFilled, DeleteOutlined, MoreOutlined, UnorderedListOutlined 
 import { App, Card, Divider, Dropdown, Tooltip } from 'antd'
 import Image from 'next/image'
 import React, { useEffect, useRef, useState } from 'react'
-import { TodoModalOpenType } from '.'
-import { TodoContextType, TodoType, useTodoContext } from '@/context/TodoContext'
-import { OpenMoveModalType } from './TodoBody'
+import { useTodoContext } from '@/context/TodoContext'
 import moment from 'moment'
-import { UserContextType, useUserContext } from '@/context/UserContext'
+import { useUserContext } from '@/context/UserContext'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { OpenMoveModalType, TodoContextType, TodoModalOpenType, TodoType, UserContextType } from '@/lib/types'
 
 type TodoFilePropstype = {
     todo: TodoType

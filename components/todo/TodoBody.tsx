@@ -2,8 +2,7 @@ import { FolderFilled, HomeOutlined, UnorderedListOutlined } from '@ant-design/i
 import { Breadcrumb, Divider } from 'antd'
 import React, { useEffect, useState } from 'react'
 import Folder from './Folder'
-import { ModalOpenType, TodoBodyFilterType, TodoModalOpenType } from '.'
-import { FolderType, TodoContextType, TodoDataType, useTodoContext } from '@/context/TodoContext'
+import { useTodoContext } from '@/context/TodoContext'
 import TodoLoading from './TodoLoading'
 import NoData from '../NoData'
 import Link from 'next/link'
@@ -11,8 +10,8 @@ import { BreadcrumbItemType } from 'antd/es/breadcrumb/Breadcrumb'
 import TodoFile from './TodoFile'
 import MoveModal from './MoveModal'
 import { useSearchParams } from 'next/navigation'
+import { ModalOpenType, OpenMoveModalType, TodoContextType, TodoDataType, TodoModalOpenType } from '@/lib/types'
 
-export type OpenMoveModalType = (id: string, name: string, type: "Folder" | "Todo") => void
 
 type TodoBodyPropsType = {
     folderId: string | null

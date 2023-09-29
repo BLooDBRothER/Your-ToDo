@@ -1,4 +1,5 @@
-import { FolderType, TodoContextType, useTodoContext } from '@/context/TodoContext';
+import { useTodoContext } from '@/context/TodoContext';
+import { FolderType, TodoContextType } from '@/lib/types';
 import { ArrowRightOutlined, CloseOutlined, FolderFilled, HomeFilled, UnorderedListOutlined } from '@ant-design/icons'
 import { App, Divider, Modal, Spin, Tree } from 'antd'
 import { DataNode } from 'antd/es/tree'

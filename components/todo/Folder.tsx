@@ -1,11 +1,10 @@
 import { DeleteOutlined, FolderFilled, MoreOutlined } from '@ant-design/icons'
 import { App, Dropdown, Tooltip } from 'antd'
 import React, { useEffect, useRef, useState } from 'react'
-import { ModalOpenType } from '.'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { TodoContextType, useTodoContext } from '@/context/TodoContext'
+import { useTodoContext } from '@/context/TodoContext'
 import { dropdownMenuItem } from '@/lib/contextMenuItem'
-import { OpenMoveModalType } from './TodoBody'
+import { ModalOpenType, OpenMoveModalType, TodoContextType } from '@/lib/types'
 
 type FolderPropType = {
     id: string

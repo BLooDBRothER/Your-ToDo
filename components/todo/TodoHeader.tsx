@@ -1,9 +1,9 @@
 import { FolderAddOutlined, PlusOutlined, UnorderedListOutlined } from '@ant-design/icons'
 import { Button, Dropdown, Input, MenuProps, Segmented } from 'antd'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { ModalOpenType } from '.'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import useDebounce from '@/app/hooks/useDebounce'
+import { ModalOpenType } from '@/lib/types'
 
 type TodoHeaderPropsType = {
     openModal: ModalOpenType

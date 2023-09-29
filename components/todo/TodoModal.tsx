@@ -1,11 +1,11 @@
 import { BorderOutlined, CheckOutlined, CheckSquareOutlined, CopyFilled, DeleteOutlined, EditFilled, EditOutlined, PlusOutlined, ReconciliationFilled, ReconciliationOutlined } from '@ant-design/icons'
 import { App, Button, DatePicker, DatePickerProps, Divider, Input, InputRef, Modal, Segmented, Space, Spin } from 'antd'
 import React, { useEffect, useRef, useState } from 'react'
-import { TodoModalType } from '.'
-import { TodoContentType, TodoContextType, TodoType, useTodoContext } from '@/context/TodoContext'
+import { useTodoContext } from '@/context/TodoContext'
 import NoData from '../NoData'
 import TodoLoading from './TodoLoading'
 import dayjs from 'dayjs'
+import { TodoContentType, TodoContextType, TodoModalType, TodoType } from '@/lib/types'
 
 type TodoModalPropsType = TodoModalType & {
   isRename: boolean
@@ -164,15 +164,13 @@ const TodoModal = ({ todoId, isOpen, isRename, closeModal  }: TodoModalPropsType
         return;
       }
 
-      addMultipleTodo(todo.id, copiedTodo.todoContent)
+      addMultipleTodo(todo.id, copiedTodo.todoContent);
+      await navigator.clipboard.writeText("");
       
     }
     catch{
       if(data.length > 1000) return;
       addTodo(todo.id, data);
-    }
-    finally{
-      await navigator.clipboard.writeText("");
     }
   }
 

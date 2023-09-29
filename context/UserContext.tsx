@@ -1,20 +1,8 @@
 "use client";
 
+import { UserContextType, UserDataLoadingType, UserDataType } from "@/lib/types";
 import axios from "axios";
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
-
-export type UserContextType = {
-    userData: UserDataType
-    isUserDataLoading: UserDataLoadingType
-    updateUserMetaData: (field: "emailRemainder" | "relativeTime", value: boolean) => Promise<boolean>
-}
-
-type UserDataType = {
-    emailRemainder: boolean
-    relativeTime: boolean
-}
-
-type UserDataLoadingType = UserDataType
 
 
 const userContext = createContext<UserContextType | null>(null);

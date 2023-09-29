@@ -1,7 +1,7 @@
-import { TodoContextType, useTodoContext } from '@/context/TodoContext'
+import { useTodoContext } from '@/context/TodoContext'
+import { NameModalType, TodoContextType } from '@/lib/types'
 import { App, Input, InputRef, Modal } from 'antd'
 import React, { useEffect, useRef, useState } from 'react'
-import { NameModalType } from '.'
 
 type NameModalPropsType = NameModalType & {
   parentFolderId: string | null

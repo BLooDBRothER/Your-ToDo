@@ -1,5 +1,6 @@
 
-import { UserContextType, useUserContext } from '@/context/UserContext';
+import { useUserContext } from '@/context/UserContext';
+import { UserContextType } from '@/lib/types';
 import { ClockCircleFilled, DownOutlined, LogoutOutlined, MailFilled } from '@ant-design/icons';
 import { Avatar, Dropdown, MenuProps, Skeleton, Switch } from 'antd';
 import { signOut, useSession } from 'next-auth/react';

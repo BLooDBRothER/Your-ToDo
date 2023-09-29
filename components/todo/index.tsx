@@ -2,32 +2,12 @@ import React, { useCallback, useEffect, useState } from 'react'
 import TodoHeader from './TodoHeader'
 import TodoBody from './TodoBody'
 import NameModal from './NameModal'
-import { TodoContextType, TodoType, useTodoContext } from '@/context/TodoContext'
+import { useTodoContext } from '@/context/TodoContext'
 import PageNotFound from './404'
 import TodoModal from './TodoModal'
 import { App } from 'antd'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
-
-export type ModalOpenType = (type: "create" | "rename", id?: string | null, name?: string) => void
-export type TodoModalOpenType = (todoId: string, isRename: boolean) => void
-
-export type NameModalType = {
-    id: string | null
-    name?: string | null
-    type: "create" | "rename"
-    isOpen: boolean
-}
-
-export type TodoModalType = {
-    todoId: string
-    isOpen: boolean
-    isRename: boolean
-}
-
-export type TodoBodyFilterType = {
-    visibility: string;
-    searchQuery: string;
-}
+import { ModalOpenType, NameModalType, TodoContextType, TodoModalOpenType, TodoModalType, TodoType } from '@/lib/types'
 
 const NAME_MODEL_INITIAL_VALUE: NameModalType = {
     id: null,
