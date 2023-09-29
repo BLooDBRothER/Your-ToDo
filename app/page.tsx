@@ -59,7 +59,7 @@ const Home = () => {
           {
             isAuthorized ?
             <Todo folderId={null} />:
-            <div className='flex items-center justify-center h-[calc(100vh-80px)]'>
+            <div className='flex items-center justify-center h-[calc(100vh-100px)]'>
               <div className='flex flex-col items-center justify-center w-9/12 md:w-[400px] mx-auto bg-primary p-4 gap-4 h-[400px] rounded-md border border-light'>
                 <div className='flex-1 flex items-center justify-center'>
                   <Image

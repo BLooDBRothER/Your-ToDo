@@ -154,8 +154,13 @@ const TodoModal = ({ todoId, isOpen, isRename, closeModal  }: TodoModalPropsType
   const pasteTodo = async () => {
     const data = await navigator.clipboard.readText();
     if(!data) return;
+    message.open({
+      type: 'loading',
+      content: 'Pasting Todo...',
+      duration: 0,
+    });
     try{
-      const copiedTodo = JSON.parse(data)
+      const copiedTodo = JSON.parse(data);
       
       if(!(copiedTodo.id && Array.isArray(copiedTodo.todoContent))) throw Error();
 
@@ -171,6 +176,9 @@ const TodoModal = ({ todoId, isOpen, isRename, closeModal  }: TodoModalPropsType
     catch{
       if(data.length > 1000) return;
       addTodo(todo.id, data);
+    }
+    finally{
+      message.destroy();
     }
   }
 
