@@ -154,11 +154,6 @@ const TodoModal = ({ todoId, isOpen, isRename, closeModal  }: TodoModalPropsType
   const pasteTodo = async () => {
     const data = await navigator.clipboard.readText();
     if(!data) return;
-    message.open({
-      type: 'loading',
-      content: 'Pasting Todo...',
-      duration: 0,
-    });
     try{
       const copiedTodo = JSON.parse(data);
       
@@ -168,17 +163,21 @@ const TodoModal = ({ todoId, isOpen, isRename, closeModal  }: TodoModalPropsType
         message.error("Cannot Paste on same Todo");
         return;
       }
+      message.open({
+        type: 'loading',
+        content: 'Pasting Todo...',
+        duration: 0,
+      });
 
       addMultipleTodo(todo.id, copiedTodo.todoContent);
       await navigator.clipboard.writeText("");
+     
+      message.destroy();
       
     }
     catch{
       if(data.length > 1000) return;
       addTodo(todo.id, data);
-    }
-    finally{
-      message.destroy();
     }
   }
 
