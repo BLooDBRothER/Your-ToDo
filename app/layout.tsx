@@ -9,6 +9,7 @@ import { AntdStyleProvider } from '@/context/AntdProvider'
 import TodoContextProvider from '@/context/TodoContext'
 import UserContextProvider from '@/context/UserContext'
 import Footer from '@/components/Footer'
+import { Analytics } from '@vercel/analytics/react';
 
 const nunitoSans = Nunito_Sans({ subsets: ['latin'] })
 
@@ -56,6 +57,7 @@ export default async function RootLayout({
           </AntdStyleProvider>
         </NextAuthProvider>
         <Footer />
+        <Analytics />
       </body>
     </html>
   )

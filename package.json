@@ -20,6 +20,7 @@
     "@types/react": "18.2.20",
     "@types/react-dom": "18.2.7",
     "@upstash/qstash": "^2.1.2",
+    "@vercel/analytics": "^1.0.2",
     "antd": "^5.8.3",
     "autoprefixer": "10.4.15",
     "axios": "^1.4.0",
